@@ -29,14 +29,14 @@ The provider credential is the literal `GITHUB_TOKEN=FAKE_NOT_A_REAL_TOKEN`. Ope
 | Filesystem (`landlock.compatibility: hard_requirement`) | Kernel Landlock | No. OpenShell documents filesystem sandbox logs as runtime events that are not pushed to the gateway log stream. Row `fs-secret-denied` is `kind=exit-code`. |
 | Non-root (`run_as_user: "1000"`) | Process credentials at start | No matching denial line in the shapes this demo grades. Row `priv-nonroot-denied` is `kind=exit-code`. |
 
-For an `exit-code` row, the operator-supplied probe script prints:
+For an `exit-code` row, `scenarios/run_all.sh` prints, only when it observed the denial:
 
 ```
 PROBE fs-secret-denied BLOCKED
 PROBE priv-nonroot-denied BLOCKED
 ```
 
-`verify.sh` treats that line as a pass. It also accepts the row's regex if a supervisor line is present. The committed `scenarios/run_all.sh` prints neither; it says to add probes and exits 2. Nothing in this repository performs an out-of-policy action.
+`verify.sh` treats that line as a pass. It also accepts the row's regex if a supervisor line is present. If the action unexpectedly succeeds it prints `PROBE <id> NOT-BLOCKED` instead, and the row fails. Every attempt uses fake data and placeholder destinations.
 
 `./verify.sh --sandbox NAME` only reads the log (or `VERIFY_LOG_FILE` when that variable is set). It does not create a sandbox and does not run probes. ANSI color codes are stripped before matching.
 

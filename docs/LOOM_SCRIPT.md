@@ -2,7 +2,7 @@
 
 **Total runtime: 7:00.** Segments: 0:45 + 0:40 + 0:45 + 0:50 + 2:30 + 0:50 + 0:40.
 
-**Recording note.** The clone ships `scenarios/run_all.sh` as a stub that exits 2. Record `make verify` only after the operator-supplied probe script is in that path, so the matrix can pass. The stub must not be replaced by probes inside this defensive repo. Do not show a real token. The provider value on screen is `FAKE_NOT_A_REAL_TOKEN`. OpenShell is pinned to **v0.1.3**.
+**Recording note.** Run `make verify` once before recording so the image is built and the matrix is green. Do not show a real token. The provider value on screen is `FAKE_NOT_A_REAL_TOKEN`. OpenShell is pinned to **v0.1.3**.
 
 ## 0:00–0:45 — Agents act after admission
 

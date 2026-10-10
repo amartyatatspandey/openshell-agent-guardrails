@@ -1,6 +1,6 @@
 # OpenShell agent guardrails
 
-An agent that has already been admitted keeps acting. Those later actions never pass back through a Kubernetes admission webhook. This repo is a single-machine demonstration that NVIDIA OpenShell **v0.1.3** can still deny them: default-deny egress, policy DNS, the cloud-metadata address, GitHub writes, the wrong binary, a planted world-readable secret, and a non-root process. The harness only observes the sandbox audit log and prints a PASS/FAIL matrix. It does not perform the out-of-policy actions. Those live in an operator-supplied `scenarios/run_all.sh`. The file in this clone is a stub that tells you to add probes and exits 2.
+An agent that has already been admitted keeps acting. Those later actions never pass back through a Kubernetes admission webhook. This repo is a single-machine demonstration that NVIDIA OpenShell **v0.1.3** can still deny them: default-deny egress, policy DNS, the cloud-metadata address, GitHub writes, the wrong binary, a planted world-readable secret, and a non-root process. `scenarios/run_all.sh` makes one small, labelled attempt per control inside the sandbox, using only fake data and placeholder destinations. `verify.sh` then reads OpenShell's own audit log and prints a PASS/FAIL matrix, so every result comes from the sandbox, not from the script.
 
 The audience is the governance question AIControls asks across three planes (Developer, Agent, MCP) and four domains (access, cost, security, compliance). OpenShell is the kernel-enforced box. AIControls is the fleet. This demo does not pretend they are the same product.
 
@@ -28,7 +28,7 @@ make clean    # openshell sandbox delete guardrails-demo
 
 `make help` lists `setup`, `preflight`, `verify`, `demo`, and `clean`.
 
-`make verify` runs `scenarios/run_all.sh` inside the sandbox. Until you replace the stub, that command prints `add probes` and exits 2. After the operator-supplied probes are in place, the script should exit 0 and print `PROBE <id> BLOCKED` for the two kernel-only rows (`fs-secret-denied`, `priv-nonroot-denied`). OpenShell does not send Landlock denials to `openshell logs --source sandbox`. See `policies/openshell/README.md`.
+`make verify` runs `scenarios/run_all.sh` inside the sandbox; it prints a `== <id>: <control> ==` label before each attempt. For the two kernel-only rows (`fs-secret-denied`, `priv-nonroot-denied`) it prints `PROBE <id> BLOCKED` only when it actually observed the permission error, and `PROBE <id> NOT-BLOCKED` otherwise. OpenShell does not send Landlock denials to `openshell logs --source sandbox`. See `policies/openshell/README.md`.
 
 Grade a log you already have, without creating a sandbox:
 
