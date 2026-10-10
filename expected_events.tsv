@@ -1,0 +1,11 @@
+id	control	plane	domain	kind	pattern
+cred-unauthorized-endpoint	Provider credential blocked at an unauthorized endpoint	MCP	security	log	FINDING:BLOCKED \[HIGH\] "Provider credential used at an unauthorized endpoint"
+cred-endpoint-mismatch	Credential rejected when the request falls outside the provider endpoint binding	MCP	security	log	HTTP:GET \[HIGH\] DENIED .*\[reason:credential_endpoint_mismatch\]
+egress-default-deny	Default-deny egress to a host that no policy allows	Agent	access	log	NET:OPEN \[MED\] DENIED /usr/bin/curl\([0-9]+\) -> example\.com:443 \[reason:transparent_tcp_policy_denied\]
+dns-policy-refuse	DNS answer refused because the name is not eligible for policy DNS	Agent	access	log	NET:REFUSE \[MED\] DENIED .*\[reason:policy_dns_ineligible\]
+metadata-address-refused	Cloud metadata link-local address refused	Agent	security	log	NET:OPEN \[MED\] DENIED .*169\.254\.169\.254:80
+l7-delete-denied	GitHub DELETE denied by the read-only L7 rule	MCP	access	log	HTTP:DELETE \[MED\] DENIED DELETE http://api\.github\.com:443/.*\[policy:github_readonly engine:l7\]
+l7-post-denied	GitHub POST denied by the read-only L7 rule	MCP	access	log	HTTP:POST \[MED\] DENIED POST http://api\.github\.com:443/.*\[policy:github_readonly engine:l7\]
+binary-identity-denied	python3 denied to api.github.com; only the allowed binary may open that endpoint	Agent	access	log	NET:OPEN \[MED\] DENIED /usr/bin/python3\.12\([0-9]+\) -> api\.github\.com:443
+fs-secret-denied	Read of the world-readable planted secret denied by Landlock (recorded by the supervisor when the log shows it; otherwise the probe line)	Agent	security	exit-code	PROBE fs-secret-denied BLOCKED
+priv-nonroot-denied	Privilege gain denied; workload stays non-root (recorded by the supervisor when the log shows it; otherwise the probe line)	Agent	security	exit-code	PROBE priv-nonroot-denied BLOCKED
