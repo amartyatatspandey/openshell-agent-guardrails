@@ -79,7 +79,7 @@ check_openshell() {
   local version_out
   version_out="$(openshell version 2>/dev/null || openshell --version 2>/dev/null || true)"
   case "$version_out" in
-    *v0.1.3*)
+    *0.1.3*)
       ok "openshell ${PINNED_VERSION}"
       ;;
     *)
