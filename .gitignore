@@ -2,3 +2,5 @@
 *.log
 !tests/fixtures/*.log
 .out/
+bonus/kyverno-guard/kyverno-guard.pid
+bonus/kyverno-guard/bin/

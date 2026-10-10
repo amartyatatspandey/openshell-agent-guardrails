@@ -1,0 +1,13 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: github-read-path
+spec:
+  failurePolicy: Fail
+  evaluation:
+    mode: HTTP
+  validations:
+    - expression: >
+        object.attributes.host == "api.github.com" && !(object.attributes.method in ["GET", "HEAD"] && object.attributes.path == "/repos/example-org/example-repo")
+          ? http.Denied("kyverno_path_denied").Response()
+          : http.Allowed().Response()

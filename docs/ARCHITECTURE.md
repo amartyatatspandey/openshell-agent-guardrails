@@ -54,4 +54,4 @@ Pending policy edits an agent asks for stay pending until a person acts. The CLI
 
 ## What a fleet product would add
 
-Kyverno CEL can reject a bad copy of this YAML in git or in a cluster, which is Developer-plane admission of the policy. It still does not see the agent's next request. Nirmata Runtime is the place the same intent (default-deny, no metadata address, read-only tool calls, no secret file, non-root) would be enforced across nodes. This repo does not wire either product to OpenShell. OpenShell v0.1.3 remains a single-box alpha runtime.
+`make kyverno` attaches `kyverno-guard` to `api.github.com` on a separate policy, `policies/openshell/agent-policy-kyverno.yaml`. The middleware runs after OpenShell admits the HTTP request and asks `kyverno-authz` to decide. The CEL rule allows one fictional read path and denies the rest with `kyverno_path_denied`. That is a second decision on traffic OpenShell already allowed, not a review of this YAML. Nirmata Runtime is still the place the same intent would be enforced across nodes. This repo does not wire Nirmata Runtime. OpenShell v0.1.3 remains a single-box alpha runtime.

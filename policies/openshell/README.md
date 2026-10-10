@@ -21,3 +21,5 @@ Pinned CLI: OpenShell **v0.1.3**. On Docker Desktop for Mac, **Settings > Resour
 `openshell rule get <name> --status pending` lists agent-proposed rule changes waiting for a person. This policy file does not auto-approve anything. The demo never approves a pending rule.
 
 `scenarios/run_all.sh` makes one attempt per row above inside the sandbox, so a live run generates these lines. `make verify` grades them.
+
+`agent-policy-kyverno.yaml` is the same sandbox policy plus `network_middlewares.kyverno_guard` on `api.github.com`. `make kyverno` registers the middleware and uses that file. `make verify` does not.

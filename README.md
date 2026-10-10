@@ -64,11 +64,18 @@ The Developer plane is the review of `policies/openshell/agent-policy.yaml` befo
 - **OpenShell is alpha.** This demo pins **v0.1.3**. Log lines and CLI flags match that release's documented shorthand (`NET:`, `HTTP:`, `FINDING:`). Do not treat the project as a finished control plane.
 - **AIControls governs fleets.** Developer, Agent, and MCP governance, across access, cost, security, and compliance, are a product surface for many clusters and agents. This repository only shows the runtime denials a fleet product would want as evidence. It does not ship AIControls, and it does not claim a Nirmata product ingests these logs today.
 
-## How this extends with Kyverno CEL and Nirmata Runtime
+## Kyverno CEL bonus
 
-Two follow-on steps, stated as a roadmap:
+`make kyverno` wires the bonus that `make verify` does not grade. OpenShell still admits `GET` and `HEAD` to `api.github.com`. After that admission, and before provider credentials are injected, supervisor middleware `kyverno-guard` forwards the raw request to `kyverno-authz` v0.4.0. The CEL rule in `bonus/kyverno-guard/policy/github-read-path.yaml` allows only `GET` or `HEAD` of `/repos/example-org/example-repo` and denies every other path on that host with reason `kyverno_path_denied`. `DELETE` and `POST` never reach Kyverno; the read-only L7 rule denies them first.
 
-1. **Kyverno CEL (Developer plane).** Admit the sandbox policy as a reviewed artifact. A CEL policy can reject a change that drops `landlock.compatibility: hard_requirement`, switches the process user to root, or opens a network rule that is not read-only. That happens before an agent is scheduled. It does not see the agent's later `curl`. Kyverno validating the YAML is not the same as OpenShell denying a packet.
-2. **Nirmata Runtime (Agent and MCP planes, many nodes).** Take the same intent — default-deny egress, no link-local metadata address, read-only tool APIs, no secret file, non-root — and enforce it where the fleet runs, not only inside one OpenShell sandbox on a laptop. The PASS/FAIL matrix in this repo is the local evidence those controls should keep producing.
+OpenShell's own audit log records the decision, for example `HTTP:GET [MED] DENIED ... [engine:middleware] [reason:middleware_denied:kyverno_guard:kyverno_path_denied]`.
+
+Bonus prerequisites: macOS with the Homebrew OpenShell install (the scripts edit `/opt/homebrew/var/openshell/gateway.toml` and use `brew services`), Go 1.24 or newer to build `kyverno-guard`, and the core prerequisites above. The scripts back up the gateway config and `make kyverno-stop` restores it.
+
+The graded policy stays `policies/openshell/agent-policy.yaml`. The wired policy is `policies/openshell/agent-policy-kyverno.yaml`. `make kyverno-stop` removes the gateway registration and stops both processes. Until then, an OpenShell restart needs `kyverno-guard` listening on `127.0.0.1:50061`, because the gateway refuses to start when a registered middleware is down.
+
+## How this extends with Nirmata Runtime
+
+Nirmata Runtime is the fleet form of the same intent: default-deny egress, no link-local metadata address, read-only tool APIs, no secret file, non-root. This repository does not wire that product. The PASS/FAIL matrix is the local evidence those controls should keep producing.
 
 Cost and compliance at fleet scale (spend limits, retention of the audit trail, who approved a policy change) are out of scope for the shell scripts here. `openshell rule get <sandbox> --status pending` is how a person would see an agent asking for more access. This demo does not approve those requests.
