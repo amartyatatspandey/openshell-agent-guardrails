@@ -116,6 +116,15 @@ ${scenario_text}"
       printf '%s\n' "$scenario_text"
       echo "add probes: scenarios/run_all.sh exited 2. The committed script does not run probes."
     fi
+    if [ "${DEMO:-0}" = "1" ]; then
+      echo "----- inside the sandbox: what the agent attempted -----"
+      printf '%s\n' "$scenario_text" | grep -E '^(== |PROBE )' || true
+      echo
+      echo "----- OpenShell audit log: what the sandbox denied -----"
+      printf '%s\n' "$audit" | grep -E 'DENIED|FINDING:' \
+        | sed -E 's/^\[[0-9.]+\] \[sandbox\] \[OCSF *\] \[ocsf\] //' || true
+      echo
+    fi
   fi
 fi
 

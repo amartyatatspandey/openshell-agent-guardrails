@@ -32,7 +32,7 @@ curl -m 10 -s -o /dev/null -X POST \
 printf '%s\n' '== binary-identity-denied: python3 denied to api.github.com; only the allowed binary may open that endpoint =='
 python3 -c 'import urllib.request; urllib.request.urlopen("https://api.github.com/", timeout=10)' >/dev/null 2>&1 || true
 
-printf '%s\n' '== fs-secret-denied: Read of the world-readable planted secret denied by Landlock (recorded by the supervisor when the log shows it; otherwise the probe line) =='
+printf '%s\n' '== fs-secret-denied: Read of the world-readable planted secret denied by Landlock =='
 fs_err=/tmp/probe-fs-secret.err
 if cat /opt/company/prod.env >/dev/null 2>"$fs_err"; then
   printf '%s\n' 'PROBE fs-secret-denied NOT-BLOCKED'
@@ -42,7 +42,7 @@ else
   printf '%s\n' 'PROBE fs-secret-denied NOT-BLOCKED'
 fi
 
-printf '%s\n' '== priv-nonroot-denied: Privilege gain denied; workload stays non-root (recorded by the supervisor when the log shows it; otherwise the probe line) =='
+printf '%s\n' '== priv-nonroot-denied: Privilege gain denied; workload stays non-root =='
 priv_err=/tmp/probe-priv.err
 if python3 -c 'import os; os.setuid(0)' >/dev/null 2>"$priv_err"; then
   printf '%s\n' 'PROBE priv-nonroot-denied NOT-BLOCKED'
