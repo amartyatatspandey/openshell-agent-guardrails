@@ -56,7 +56,7 @@ These are classes of incident, not write-ups of a particular breach. The plane i
 | `fs-secret-denied` | Secrets sprawl | Agent | security | Landlock denies `/opt/company/prod.env` even though it is mode `0644` |
 | `priv-nonroot-denied` | Privilege escalation | Agent | security | Workload stays uid/gid 1000 |
 
-The Developer plane is the review of `policies/openshell/agent-policy.yaml` before a sandbox is created. None of the ten rows are that review; they are runtime evidence for the Agent and MCP planes. `docs/ARCHITECTURE.md` is the picture. `docs/LOOM_SCRIPT.md` is the 7-minute narration.
+The Developer plane is the review of `policies/openshell/agent-policy.yaml` before a sandbox is created. None of the ten rows are that review; they are runtime evidence for the Agent and MCP planes. `docs/ARCHITECTURE.md` is the picture.
 
 ## What this is not
 
