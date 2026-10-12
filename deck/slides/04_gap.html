@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { font-size: 48px; }
+  .timeline { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1.55fr; align-items: stretch; margin-top: 4px; }
+  .stage { border: 2px solid #1A1A1A; padding: 14px 18px; display: flex; flex-direction: column; }
+  .stage .when { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8a8a8a; margin-bottom: 6px; }
+  .stage h3 { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+  .stage p { font-size: 14px; line-height: 1.5; color: #333; }
+  .stage .st { margin-top: auto; padding-top: 10px; }
+  .stage.done { background: #F4F4F4; }
+  .stage.hot { border-color: #D9381E; border-width: 3px; background: #FFF6F4; }
+  .stage.hot .when { color: #D9381E; }
+  .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-top: 8px; }
+  .acts div { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; background: #fff; border: 1.5px solid #1A1A1A; padding: 5px 8px; }
+  .arrow { display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; color: #1A1A1A; }
+  .q { margin-top: 24px; font-size: 32px; font-weight: 900; letter-spacing: -0.01em; }
+  .q span { color: #D9381E; }
+  .answer { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .ctl { border-top: 4px solid #1A1A1A; padding-top: 8px; }
+  .ctl .t { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .ctl p { font-size: 13.5px; color: #333; line-height: 1.45; margin-top: 4px; }
+  /* sizing pass: fill the 720px frame */
+  .stage { min-height: 200px; padding: 18px 20px; }
+  .stage h3 { font-size: 22px; }
+  .stage p { font-size: 15.5px; }
+  .acts div { font-size: 13.5px; padding: 7px 9px; }
+  .q { margin-top: 36px; font-size: 38px; }
+  .answer { margin-top: 20px; gap: 18px; }
+  .ctl .t { font-size: 13px; }
+  .ctl p { font-size: 15.5px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">04 — The gap</div>
+    <h1>An AI agent never reaches an admission webhook.</h1>
+    <div class="timeline">
+      <div class="stage done">
+        <div class="when">Before · Developer plane</div>
+        <h3>Policy is reviewed</h3>
+        <p>Someone reads <code>agent-policy.yaml</code> before a sandbox exists.</p>
+        <div class="st"><span class="pill">Review</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage done">
+        <div class="when">Deploy · Admission</div>
+        <h3>Kyverno admits the workload</h3>
+        <p>Decides what is allowed to <i>run</i>. Then it's finished.</p>
+        <div class="st"><span class="pill fill">Done ✓</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage hot">
+        <div class="when">Runtime · Agent + MCP planes</div>
+        <h3>The agent does its actual work</h3>
+        <div class="acts">
+          <div>reads files</div><div>opens connections</div>
+          <div>calls APIs / MCP tools</div><div>spends credentials</div>
+        </div>
+        <div class="st"><span class="pill red">Admission never sees any of this</span></div>
+      </div>
+    </div>
+    <div class="q">Once the agent is running, <span>what still says no?</span></div>
+    <div class="answer">
+      <div class="ctl"><div class="t">Filesystem</div><p>Landlock: the agent sees only the paths policy grants.</p></div>
+      <div class="ctl"><div class="t">Network</div><p>Default-deny egress, policy DNS, L7 method rules, per-binary.</p></div>
+      <div class="ctl"><div class="t">Identity</div><p>Runs as uid 1000. Can't make itself root.</p></div>
+      <div class="ctl"><div class="t">Credentials</div><p>Holds a placeholder. Can only spend it where it's bound.</p></div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 04 / 15</span>
+  </div>
+</div>
+</body>
+</html>

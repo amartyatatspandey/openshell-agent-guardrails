@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .not li { list-style: none; font-size: 14px; line-height: 1.5; color: #333; padding: 7px 0 7px 22px; border-bottom: 1px solid #EEE; position: relative; }
+  .not li:last-child { border-bottom: 0; }
+  .not li::before { content: "✕"; position: absolute; left: 0; top: 7px; color: #D9381E; font-weight: 900; font-size: 13px; }
+  .not li b { color: #1A1A1A; }
+  .term { font-size: 13.5px; line-height: 1.75; padding: 14px 18px; }
+  .ask { margin-top: 12px; font-size: 14px; line-height: 1.5; color: #333; }
+  .closing { margin-top: 20px; border: 3px solid #1A1A1A; padding: 16px 22px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+  .closing .big { font-size: 22px; font-weight: 800; line-height: 1.35; }
+  .closing .big span { color: #D9381E; }
+  .closing .who { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #555; text-align: right; line-height: 1.6; }
+  /* sizing pass: fill the 720px frame */
+  .not li { font-size: 16px; padding: 11px 0 11px 24px; }
+  .not li::before { top: 11px; }
+  .term { font-size: 15px; line-height: 1.85; padding: 18px 22px; }
+  .ask { font-size: 15px; margin-top: 16px; }
+  .closing { margin-top: 30px; padding: 22px 26px; }
+  .closing .big { font-size: 24px; }
+  .closing .who { font-size: 13.5px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">15 — Scope, and how to run it</div>
+    <h1>Precise about what it is, and what it isn't</h1>
+    <div class="grid">
+      <div class="box">
+        <div class="label red">What this is not</div>
+        <div class="body"><ul class="not">
+          <li><b>Not a fleet.</b> One gateway, one Docker host, one sandbox.</li>
+          <li><b>Not AIControls.</b> It's the runtime evidence a fleet product would want to collect.</li>
+          <li><b>Not production-grade OpenShell.</b> v0.1.3 is alpha, so it's pinned.</li>
+          <li><b>Not the cost domain.</b> Spend and quotas aren't measured here.</li>
+          <li><b>Not a retention system.</b> Compliance evidence is the local log + matrix.</li>
+        </ul></div>
+      </div>
+      <div>
+<div class="term"><span class="m"># on your machine (Docker Desktop, host networking on)</span>
+make setup        <span class="m"># image, profile, fake provider</span>
+make verify       <span class="m"># preflight → sandbox → <span class="g">10 PASS / 0 FAIL</span></span>
+make demo         <span class="m"># same, with attempt + raw-log panels</span>
+make kyverno      <span class="m"># bonus: Kyverno decides</span>
+make kyverno-stop <span class="m"># restore gateway.toml exactly</span>
+make clean</div>
+        <div class="ask">Prerequisites, checks and the full control table are in <code>README.md</code>. <code>docs/ARCHITECTURE.md</code> says what is enforced where.</div>
+      </div>
+    </div>
+    <div class="closing">
+      <div class="big">I can pick up a brand-new runtime, go to its source when the docs stop, and come back with something that <span>actually runs</span> and ties to what Nirmata is building.</div>
+      <div class="who">Amartya Pandey<br>github.com/amartyatatspandey<br>Thank you, Ritesh.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 15 / 15</span>
+  </div>
+</div>
+</body>
+</html>

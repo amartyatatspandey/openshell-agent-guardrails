@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .parts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .part { border: 2px solid #1A1A1A; padding: 12px 16px 14px 16px; display: flex; flex-direction: column; }
+  .part .trust { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .part.t .trust { color: #4d7a5b; } .part.u .trust { color: #D9381E; } .part.i .trust { color: #4a5f8c; }
+  .part.t { background: #EEF5EE; } .part.u { background: #FFF1EE; border-color: #D9381E; } .part.i { background: #EEF2F9; }
+  .part h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .part p { font-size: 13.5px; line-height: 1.5; color: #333; }
+  .part .where { margin-top: auto; padding-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #555; }
+  .layers-title { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin: 18px 0 8px 0; }
+  .layers-title span { color: #D9381E; }
+  .layers { display: grid; grid-template-columns: repeat(5, 1fr); border: 2px solid #1A1A1A; }
+  .layer { padding: 10px 12px; border-right: 1px solid #E0E0E0; }
+  .layer:last-child { border-right: 0; background: #F6F3FA; }
+  .layer .k { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+  .layer p { font-size: 12.5px; line-height: 1.45; color: #333; }
+  .note { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #666; }
+  /* sizing pass: fill the 720px frame */
+  .parts { gap: 16px; }
+  .part { padding: 18px 20px 18px 20px; min-height: 250px; }
+  .part h3 { font-size: 25px; margin-bottom: 8px; }
+  .part p { font-size: 15px; }
+  .part .where { font-size: 12.5px; }
+  .layers-title { margin: 30px 0 10px 0; font-size: 13.5px; }
+  .layer { padding: 14px 14px; }
+  .layer .k { font-size: 13px; margin-bottom: 6px; }
+  .layer p { font-size: 13.8px; }
+  .note { margin-top: 18px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">05 — What I had to learn <span>· OpenShell v0.1.3</span></div>
+    <h1>OpenShell in four parts, and who is trusted</h1>
+    <div class="parts">
+      <div class="part t">
+        <div class="trust">Trusted · control plane</div>
+        <h3>Gateway</h3>
+        <p>Holds sandbox policy, providers (credentials) and the audit stream. Creates sandboxes through the compute driver.</p>
+        <div class="where">https://localhost:17670</div>
+      </div>
+      <div class="part t">
+        <div class="trust">Trusted · per sandbox</div>
+        <h3>Supervisor</h3>
+        <p>Every connection the agent makes goes through its proxy. It evaluates policy, injects credentials, and writes OCSF events.</p>
+        <div class="where">decides + enforces + logs</div>
+      </div>
+      <div class="part u">
+        <div class="trust">Untrusted · the agent</div>
+        <h3>Sandbox</h3>
+        <p>The agent's process. It sees a Landlock filesystem view, runs as non-root, and holds only credential placeholders.</p>
+        <div class="where">uid 1000 · Landlock · placeholders</div>
+      </div>
+      <div class="part i">
+        <div class="trust">Infrastructure</div>
+        <h3>Compute driver</h3>
+        <p>Docker, Podman, Kubernetes or a VM. Here, Docker Desktop on macOS, which needs host networking on.</p>
+        <div class="where">Docker ≥ 28 · host networking</div>
+      </div>
+    </div>
+    <div class="layers-title">Policy layers I used <span>— all deny by default</span></div>
+    <div class="layers">
+      <div class="layer"><div class="k">filesystem_policy</div><p>Read-only and read-write path lists, enforced by Landlock with <code>hard_requirement</code>.</p></div>
+      <div class="layer"><div class="k">process</div><p><code>run_as_user</code> / <code>run_as_group</code> 1000. Never root.</p></div>
+      <div class="layer"><div class="k">network_policies</div><p>host:port allowlist, L7 <code>access: read-only</code>, and the binaries allowed to use it.</p></div>
+      <div class="layer"><div class="k">providers</div><p>The secret stays in the gateway. The sandbox gets <code>openshell:resolve:env:…</code></p></div>
+      <div class="layer"><div class="k">network_middlewares</div><p>gRPC hook on each request. Used by the Kyverno bonus.</p></div>
+    </div>
+    <div class="note">Learned from the docs, then checked against OpenShell's source where the docs stopped (slides 11 and 14).</div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 05 / 15</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 14px; }
+  .pipe { display: grid; grid-template-columns: repeat(6, 1fr); border: 2px solid #1A1A1A; }
+  .pipe div { padding: 9px 10px; border-right: 1px solid #E0E0E0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.4; position: relative; }
+  .pipe div:last-child { border-right: 0; background: #1A1A1A; color: #fff; }
+  .pipe div b { display: block; font-size: 10.5px; color: #D9381E; letter-spacing: 0.1em; margin-bottom: 2px; }
+  .grid { display: grid; grid-template-columns: 250px 1fr; gap: 16px; margin-top: 14px; }
+  .score { background: #1A1A1A; color: #fff; padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; }
+  .score .num { font-family: 'JetBrains Mono', monospace; font-size: 68px; font-weight: 700; line-height: 1; }
+  .score .num span { color: #F28B7A; }
+  .score .lbl { font-size: 14px; font-weight: 800; margin-top: 8px; line-height: 1.35; }
+  .score .ex { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #bbb; margin-top: 10px; line-height: 1.6; }
+  .term { font-size: 11px; line-height: 1.65; padding: 10px 14px; }
+  .cases { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px; }
+  .case { border: 2px solid #1A1A1A; padding: 10px 14px; }
+  .case h3 { font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
+  .case p { font-size: 12.5px; line-height: 1.45; color: #333; }
+  /* sizing pass: fill the 720px frame */
+  .pipe div { padding: 13px 12px; font-size: 12.8px; }
+  .grid { margin-top: 18px; }
+  .score .num { font-size: 80px; }
+  .term { font-size: 12.3px; line-height: 1.85; padding: 14px 16px; }
+  .cases { margin-top: 20px; gap: 16px; }
+  .case { padding: 14px 16px; }
+  .case h3 { font-size: 16.5px; }
+  .case p { font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">10 — Verification <span>· verify.sh</span></div>
+    <h1>Verification, not vibes</h1>
+    <div class="pipe">
+      <div><b>01</b>make verify → preflight</div>
+      <div><b>02</b>sandbox create --policy --provider</div>
+      <div><b>03</b>run_all.sh inside the sandbox</div>
+      <div><b>04</b>openshell logs --source sandbox</div>
+      <div><b>05</b>regex per row in expected_events.tsv</div>
+      <div><b>06</b>PASS/FAIL matrix + exit code</div>
+    </div>
+    <div class="grid">
+      <div class="score">
+        <div class="num">10<span>/</span>0</div>
+        <div class="lbl">PASS / FAIL, fresh run</div>
+        <div class="ex">exit 0 · all rows matched<br>exit 1 · any row failed<br>exit 2 · setup/probe error</div>
+      </div>
+<div class="term"><span class="m"># openshell logs guardrails-demo --source sandbox   (real output, trimmed)</span>
+HTTP:GET [HIGH] <span class="d">DENIED</span> GET  [policy:public_echo engine:credential-binding] [reason:credential_endpoint_mismatch]
+FINDING:<span class="d">BLOCKED</span> [HIGH] "Provider credential used at an unauthorized endpoint"
+NET:OPEN [MED] <span class="d">DENIED</span> /usr/bin/curl(0) -> example.com:443 [reason:transparent_tcp_policy_denied]
+NET:REFUSE [MED] <span class="d">DENIED</span> not-eligible.invalid [reason:policy_dns_ineligible]
+NET:OPEN [MED] <span class="d">DENIED</span> /usr/bin/curl(0) -> 169.254.169.254:80 [reason:transparent_tcp_policy_denied]
+HTTP:DELETE [MED] <span class="d">DENIED</span> DELETE http://api.github.com:443/repos/example-org/… [policy:github_readonly engine:l7]
+HTTP:POST [MED] <span class="d">DENIED</span> POST http://api.github.com:443/repos/example-org/…/issues [policy:github_readonly engine:l7]
+NET:OPEN [MED] <span class="d">DENIED</span> /usr/bin/python3.12(0) -> api.github.com:443 [reason:transparent_tcp_policy_denied]
+<span class="g">10 PASS, 0 FAIL (10 rows)</span></div>
+    </div>
+    <div class="cases">
+      <div class="case"><h3>Patterns from real output</h3><p>Every regex was checked against captured OpenShell lines. <code>tests/fixtures/</code> holds real logs, not synthetic ones.</p></div>
+      <div class="case"><h3>The grader can fail</h3><p>A fixture with the egress line removed makes <code>verify.sh</code> exit <b>1</b>. A green run is only green if it could have been red.</p></div>
+      <div class="case"><h3>Run the way you'll run it</h3><p>Re-run end to end from a fresh clone before pushing. That's how I caught the preflight bug on slide 14.</p></div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 10 / 15</span>
+  </div>
+</div>
+</body>
+</html>

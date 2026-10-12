@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .case { border: 2px solid #1A1A1A; display: flex; flex-direction: column; }
+  .case .hd { padding: 10px 16px; border-bottom: 2px solid #1A1A1A; display: flex; justify-content: space-between; align-items: center; }
+  .case .hd .id { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; }
+  .case .bd { padding: 12px 16px; }
+  .case .row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; margin-bottom: 8px; font-size: 13.5px; line-height: 1.45; color: #333; }
+  .case .row .k { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D9381E; padding-top: 2px; }
+  .term { font-size: 11.5px; padding: 8px 12px; margin-top: 4px; }
+  .rule { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; border: 2px solid #1A1A1A; }
+  .rule div { padding: 10px 14px; border-right: 1px solid #E0E0E0; font-size: 13px; line-height: 1.45; color: #333; }
+  .rule div:last-child { border-right: 0; }
+  .rule b { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+  .strip { margin-top: 14px; }
+  /* sizing pass: fill the 720px frame */
+  .case .row { font-size: 14.5px; margin-bottom: 10px; }
+  .case .bd { padding: 14px 18px; }
+  .rule div { font-size: 14px; padding: 12px 16px; }
+  .rule { margin-top: 20px; }
+  .strip { margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">11 — Honest evidence</div>
+    <h1>Two rows look different, and I'd rather show you why</h1>
+    <div class="cases">
+      <div class="case">
+        <div class="hd"><span class="id">fs-secret-denied</span><span class="pill red">Kernel · Landlock</span></div>
+        <div class="bd">
+          <div class="row"><span class="k">What</span><span>Read <code>/opt/company/prod.env</code>, a file that is mode 0644.</span></div>
+          <div class="row"><span class="k">Why not in log</span><span>Landlock denials are runtime events. OpenShell doesn't push them to the gateway stream that <code>verify.sh</code> reads.</span></div>
+          <div class="row"><span class="k">Graded by</span><span>The attempt has to fail with <i>Permission denied</i>. If the read succeeds, it prints NOT-BLOCKED.</span></div>
+<div class="term"><span class="m">$</span> cat /opt/company/prod.env  <span class="m">→ Permission denied</span>
+PROBE fs-secret-denied <span class="d">BLOCKED</span></div>
+        </div>
+      </div>
+      <div class="case">
+        <div class="hd"><span class="id">priv-nonroot-denied</span><span class="pill red">Kernel · uid 1000</span></div>
+        <div class="bd">
+          <div class="row"><span class="k">What</span><span>Try to become root: <code>os.setuid(0)</code>.</span></div>
+          <div class="row"><span class="k">Why not in log</span><span>Identity is set when the process starts. A refused <code>setuid</code> produces no supervisor event in the shapes this demo grades.</span></div>
+          <div class="row"><span class="k">Graded by</span><span>The attempt has to raise <i>Operation not permitted</i>. Anything else is NOT-BLOCKED.</span></div>
+<div class="term"><span class="m">$</span> python3 -c 'os.setuid(0)'  <span class="m">→ PermissionError</span>
+PROBE priv-nonroot-denied <span class="d">BLOCKED</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="rule">
+      <div><b>Fail-safe direction</b>BLOCKED prints only on an observed error. Silence or success counts as a fail.</div>
+      <div><b>Same exit rules</b>Either row failing makes <code>make verify</code> exit 1, the same as a missing log line.</div>
+      <div><b>Labelled in the matrix</b>The <code>kind</code> column says <code>exit-code</code>, not <code>log</code>. No pretending.</div>
+    </div>
+    <div class="strip">
+      <div class="tag ink">Why it matters</div>
+      <div class="text">I expected these lines in the log and they weren't there. I didn't fake a match. I checked the docs and the source, then <b>graded them by the strongest evidence that actually exists</b>, and labelled it.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 11 / 15</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .grid { display: grid; grid-template-columns: 500px 1fr; gap: 20px; }
+  .term { font-size: 12.5px; line-height: 1.55; padding: 14px 18px; }
+  .term .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; background: #D9381E; color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .notes { display: flex; flex-direction: column; gap: 10px; }
+  .note { border: 2px solid #1A1A1A; padding: 10px 14px; display: grid; grid-template-columns: 30px 1fr; gap: 10px; }
+  .note .n { width: 26px; height: 26px; background: #D9381E; color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .note h3 { font-size: 15.5px; font-weight: 800; margin-bottom: 2px; }
+  .note p { font-size: 13px; line-height: 1.45; color: #333; }
+  .strip { margin-top: 14px; }
+  .strip .text { font-size: 13px; }
+  /* sizing pass: fill the 720px frame */
+  h1 { margin-bottom: 14px; }
+  .term { font-size: 12px; line-height: 1.46; padding: 12px 16px; }
+  .notes { gap: 8px; }
+  .note { padding: 8px 14px; }
+  .strip { margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">08 — The box <span>· policies/openshell/agent-policy.yaml</span></div>
+    <h1>The whole policy: four decisions, all deny-by-default</h1>
+    <div class="grid">
+<div class="term"><span class="n">1</span><span class="k">filesystem_policy:</span>
+  read_only:  [/bin, /usr, /lib, /proc,
+               /dev/urandom, /etc, /var/log]
+  read_write: [/tmp, /dev/null]
+<span class="k">landlock:</span>
+  compatibility: <span class="d">hard_requirement</span>
+
+<span class="n">2</span><span class="k">process:</span>
+  run_as_user: <span class="g">"1000"</span>
+  run_as_group: <span class="g">"1000"</span>
+
+<span class="n">3</span><span class="k">network_policies:</span>
+  github_readonly:
+    endpoints:
+      - host: api.github.com   port: 443
+        protocol: rest   enforcement: enforce
+        access: <span class="d">read-only</span>
+    binaries: [ <span class="g">/usr/bin/curl</span> ]
+  public_echo:          <span class="m"># httpbin.org, same shape</span>
+
+<span class="n">4</span><span class="m"># provider demo-github, attached at create:</span>
+  GITHUB_TOKEN=<span class="d">FAKE_NOT_A_REAL_TOKEN</span></div>
+      <div class="notes">
+        <div class="note"><div class="n">1</div><div><h3>Landlock, and no silent downgrade</h3><p>The agent sees a short read-only list and <code>/tmp</code>. <code>hard_requirement</code> means: if the kernel can't enforce Landlock, the sandbox doesn't start at all.</p></div></div>
+        <div class="note"><div class="n">2</div><div><h3>Never root</h3><p>The workload runs as uid/gid 1000 from the first instruction.</p></div></div>
+        <div class="note"><div class="n">3</div><div><h3>Two hosts, read-only, curl only</h3><p>Anything not listed is denied. <code>read-only</code> denies writes by method. The binary list means python3 to the same host is still a deny.</p></div></div>
+        <div class="note"><div class="n">4</div><div><h3>A credential that can't leak</h3><p>The gateway keeps the value. The sandbox gets a placeholder that only resolves on the bound endpoint.</p></div></div>
+      </div>
+    </div>
+    <div class="strip">
+      <div class="tag">Proof design</div>
+      <div class="text">The image plants <code>/opt/company/prod.env</code> (fake values) and runs <b><code>chmod 0644</code></b>, so it's world-readable. Unix permissions would allow the read. <b>When it's denied, only Landlock could have done it.</b> The demo proves the control, not an accident of <code>chmod</code>.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 08 / 15</span>
+  </div>
+</div>
+</body>
+</html>

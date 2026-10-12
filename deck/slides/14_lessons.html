@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 14px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .card { border: 2px solid #1A1A1A; padding: 10px 14px 12px 14px; display: flex; flex-direction: column; }
+  .card .n { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #D9381E; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .card h3 { font-size: 15px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
+  .card .r { display: grid; grid-template-columns: 50px 1fr; gap: 6px; font-size: 12.3px; line-height: 1.4; color: #333; margin-bottom: 4px; }
+  .card .r .k { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8a8a8a; padding-top: 2px; }
+  .card .r.fix .k { color: #4d7a5b; }
+  .card code { font-size: 11px; }
+  .strip { margin-top: 14px; }
+  /* sizing pass: fill the 720px frame */
+  .card { padding: 14px 16px 16px 16px; }
+  .card h3 { font-size: 16.5px; margin-bottom: 8px; }
+  .card .r { font-size: 13.3px; margin-bottom: 6px; }
+  .grid { gap: 16px; }
+  .strip { margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">14 — Honesty <span>· what the docs didn't tell me</span></div>
+    <h1>What I got wrong, and how I found out</h1>
+    <div class="grid">
+      <div class="card"><div class="n">01 · OPENSHELL ON MACOS</div><h3>Sandbox creation just failed</h3>
+        <div class="r"><span class="k">Saw</span><span><code>Startup configuration fetch failed</code>, with no doc explaining it.</span></div>
+        <div class="r"><span class="k">Cause</span><span>Docker Desktop host networking was off, so the supervisor couldn't reach the gateway.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>Preflight reads <code>HostNetworkingEnabled</code> and says how to fix it.</span></div></div>
+      <div class="card"><div class="n">02 · MY OWN PREFLIGHT</div><h3>It rejected a correct install</h3>
+        <div class="r"><span class="k">Saw</span><span>A fresh clone failed on the version check.</span></div>
+        <div class="r"><span class="k">Cause</span><span>The CLI prints <code>0.1.3</code>. I matched <code>v0.1.3</code>.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>Fixed the match. Now I always test the handover, not just the build.</span></div></div>
+      <div class="card"><div class="n">03 · A LOG LINE I DIDN'T TRUST</div><h3>A draft invented a reason string</h3>
+        <div class="r"><span class="k">Saw</span><span>A draft doc said metadata denials read "always-blocked address".</span></div>
+        <div class="r"><span class="k">Cause</span><span>Written from assumption. The real line says <code>transparent_tcp_policy_denied</code>.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>Every pattern is checked against captured output, and the fixtures are real.</span></div></div>
+      <div class="card"><div class="n">04 · KYVERNO AUTHZ</div><h3>It loaded zero policies, silently</h3>
+        <div class="r"><span class="k">Saw</span><span>No policy decisions were being made, and there was no error.</span></div>
+        <div class="r"><span class="k">Cause</span><span>v0.4.0 wants <code>policies.kyverno.io/v1alpha1</code>. The current docs show <code>v1</code>.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>Pinned the apiVersion and confirmed the DENY in OpenShell's log.</span></div></div>
+      <div class="card"><div class="n">05 · KYVERNO AUTHZ</div><h3>The policy couldn't see the path</h3>
+        <div class="r"><span class="k">Saw</span><span>Path rules didn't match the agent's request.</span></div>
+        <div class="r"><span class="k">Cause</span><span>The server evaluates the outer request unless <code>--nested-request</code> is set.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>The guard sends the agent's request as raw HTTP/1.1 in the body.</span></div></div>
+      <div class="card"><div class="n">06 · LIFECYCLE</div><h3>The guard died while registered</h3>
+        <div class="r"><span class="k">Saw</span><span>The process exited with the shell that started it.</span></div>
+        <div class="r"><span class="k">Cause</span><span>The gateway refuses to start if a registered middleware is down.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span>Built binary + nohup. Stop unregisters and restores the config exactly.</span></div></div>
+    </div>
+    <div class="strip">
+      <div class="tag ink">Pattern</div>
+      <div class="text">When the docs ran out, <b>I went to the source and to real output</b>, and fixed the tooling so the next person doesn't hit the same wall.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 14 / 15</span>
+  </div>
+</div>
+</body>
+</html>

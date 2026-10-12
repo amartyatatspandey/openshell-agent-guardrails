@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 4px; }
+  .step { border: 2px solid #1A1A1A; margin-right: 26px; padding: 12px 14px; position: relative; display: flex; flex-direction: column; min-height: 196px; }
+  .step:last-child { margin-right: 0; }
+  .step::after { content: "→"; position: absolute; right: -24px; top: 50%; transform: translateY(-50%); font-weight: 900; font-size: 20px; }
+  .step:last-child::after { content: ""; }
+  .step .n { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #D9381E; line-height: 1; margin-bottom: 8px; }
+  .step h3 { font-size: 16.5px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
+  .step p { font-size: 12.5px; line-height: 1.45; color: #333; }
+  .step .z { margin-top: auto; padding-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .h { background: #FFFFFF; } .c { background: #EEF5EE; } .x { background: #FFF1EE; } .s { background: #FBF4E4; } .e { background: #F6F3FA; }
+  .zones { margin-top: 20px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .zone { padding: 8px 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.45; border: 1.5px solid #1A1A1A; }
+  .zone b { display: block; font-size: 11.5px; letter-spacing: 0.08em; }
+  .next { margin-top: 18px; }
+  /* sizing pass: fill the 720px frame */
+  .step { min-height: 290px; padding: 16px 16px; }
+  .step .n { font-size: 32px; margin-bottom: 12px; }
+  .step h3 { font-size: 19.5px; margin-bottom: 8px; }
+  .step p { font-size: 14.5px; line-height: 1.5; }
+  .step .z { font-size: 11.5px; }
+  .zones { margin-top: 26px; }
+  .zone { padding: 11px 12px; font-size: 12px; }
+  .next { margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">06 — Architecture at a glance</div>
+    <h1>One run, end to end</h1>
+    <div class="flow">
+      <div class="step h"><div class="n">1</div><h3>make verify</h3><p>Preflight checks Docker, host networking, the OpenShell version and gateway status.</p><div class="z">Operator laptop</div></div>
+      <div class="step c"><div class="n">2</div><h3>Gateway creates the sandbox</h3><p>From the image, with <code>agent-policy.yaml</code> and the fake <code>demo-github</code> provider.</p><div class="z">Control plane</div></div>
+      <div class="step x"><div class="n">3</div><h3>The agent makes ten attempts</h3><p>One labelled attempt per control. Kernel-level ones are stopped right here.</p><div class="z">Sandbox · untrusted</div></div>
+      <div class="step s"><div class="n">4</div><h3>Supervisor decides</h3><p>Every connection goes through its proxy: egress, DNS, L7, binary, credential binding.</p><div class="z">Supervisor · trusted</div></div>
+      <div class="step e"><div class="n">5</div><h3>Log is graded</h3><p><code>verify.sh</code> reads the OCSF log, matches ten patterns, prints the matrix, sets the exit code.</p><div class="z">Evidence</div></div>
+    </div>
+    <div class="zones">
+      <div class="zone h"><b>ZONE H</b>Operator laptop</div>
+      <div class="zone c"><b>ZONE C</b>OpenShell control plane</div>
+      <div class="zone x"><b>ZONE X</b>Sandbox (untrusted)</div>
+      <div class="zone s"><b>ZONE S</b>Supervisor (trusted)</div>
+      <div class="zone" style="background:#EEF2F9"><b>ZONE K</b>Kyverno bonus</div>
+      <div class="zone e"><b>ZONE E</b>Outside world</div>
+    </div>
+    <div class="strip next">
+      <div class="tag ink">Next</div>
+      <div class="text"><b>The next slide is the full, interactive map.</b> Click any box for the mechanism, pick one of the ten controls to see where it's enforced and the exact log line, or press <b>Play</b> to walk a run step by step.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 06 / 15</span>
+  </div>
+</div>
+</body>
+</html>

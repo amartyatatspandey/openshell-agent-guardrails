@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenShell Agent Guardrails</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #1A1A1A;
+  }
+  .stage {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .frame-wrap {
+    width: 1280px;
+    height: 720px;
+    transform-origin: center center;
+    position: relative;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px #333333;
+  }
+  .frame-wrap.live {
+    box-shadow: none;
+  }
+  iframe {
+    width: 1280px;
+    height: 720px;
+    border: 0;
+    display: block;
+    background: #FFFFFF;
+    pointer-events: none;
+  }
+  .frame-wrap.live iframe {
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+  }
+  .hud {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #888888;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: #D9381E;
+    z-index: 3;
+    width: 0;
+  }
+  .hit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  .hit.prev { left: 0; width: 28%; }
+  .hit.next { right: 0; width: 72%; }
+  .frame-wrap.live .hit { display: none; }
+  .hit:focus-visible { outline: 2px solid #D9381E; outline-offset: -4px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .progress { transition: width 180ms ease; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="stage">
+  <div class="frame-wrap" id="wrap">
+    <iframe id="frame" title="Presentation slide" tabindex="-1"></iframe>
+    <button type="button" class="hit prev" id="hitPrev" aria-label="Previous slide"></button>
+    <button type="button" class="hit next" id="hitNext" aria-label="Next slide"></button>
+  </div>
+</div>
+<div class="hud">
+  <span>OPENSHELL AGENT GUARDRAILS</span>
+  <span id="hint">← → &nbsp; SPACE &nbsp; F FULLSCREEN</span>
+  <span id="counter">PAGE 01 / 15</span>
+</div>
+<script>
+const SLIDES = /*SLIDES*/;
+const INTERACTIVE = new Set(/*INTERACTIVE*/);
+const TOTAL = SLIDES.length;
+const frame = document.getElementById("frame");
+const wrap = document.getElementById("wrap");
+const counter = document.getElementById("counter");
+const progress = document.getElementById("progress");
+const hint = document.getElementById("hint");
+const hitPrev = document.getElementById("hitPrev");
+const hitNext = document.getElementById("hitNext");
+const HINT_DEFAULT = "← → &nbsp; SPACE &nbsp; F FULLSCREEN";
+const HINT_LIVE = "CLICK BOXES · 1–0 PICK A CONTROL · ← → TO CONTINUE · ESC CLOSES";
+let index = 0;
+
+function pad(n) {
+  return String(n).padStart(2, "0");
+}
+
+function parseHash() {
+  const raw = (location.hash || "").replace(/^#/, "");
+  const n = parseInt(raw, 10);
+  if (Number.isFinite(n) && n >= 1 && n <= TOTAL) return n - 1;
+  return 0;
+}
+
+function isLive(i) {
+  return INTERACTIVE.has(i);
+}
+
+function fit() {
+  if (isLive(index)) {
+    wrap.style.width = window.innerWidth + "px";
+    wrap.style.height = (window.innerHeight - 36) + "px";
+    wrap.style.transform = "none";
+    return;
+  }
+  wrap.style.width = "1280px";
+  wrap.style.height = "720px";
+  const s = Math.min(window.innerWidth / 1280, (window.innerHeight - 8) / 720);
+  wrap.style.transform = "scale(" + s + ")";
+}
+
+function bindFrameKeys() {
+  try {
+    const doc = frame.contentDocument;
+    if (!doc) return;
+    doc.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") return;
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const nav = ["ArrowRight","ArrowLeft","ArrowDown","ArrowUp","PageDown","PageUp"," ","Home","End","f","F","Backspace"];
+      if (nav.indexOf(e.key) === -1) return;
+      e.preventDefault();
+      handleKey(e.key);
+    });
+  } catch (err) {}
+}
+
+function show(i, pushHash) {
+  index = Math.max(0, Math.min(TOTAL - 1, i));
+  const live = isLive(index);
+  wrap.classList.toggle("live", live);
+  hint.innerHTML = live ? HINT_LIVE : HINT_DEFAULT;
+  frame.srcdoc = SLIDES[index];
+  counter.textContent = "PAGE " + pad(index + 1) + " / " + pad(TOTAL);
+  progress.style.width = ((index + 1) / TOTAL * 100) + "%";
+  hitPrev.disabled = index === 0;
+  hitNext.disabled = index === TOTAL - 1;
+  if (pushHash) history.replaceState(null, "", "#" + (index + 1));
+  fit();
+  if (live) {
+    frame.addEventListener("load", bindFrameKeys, { once: true });
+  } else {
+    window.focus();
+  }
+}
+
+function next() { show(index + 1, true); }
+function prev() { show(index - 1, true); }
+
+function handleKey(key) {
+  switch (key) {
+    case "ArrowRight":
+    case "ArrowDown":
+    case "PageDown":
+    case " ":
+      next();
+      break;
+    case "ArrowLeft":
+    case "ArrowUp":
+    case "PageUp":
+    case "Backspace":
+      prev();
+      break;
+    case "Home":
+      show(0, true);
+      break;
+    case "End":
+      show(TOTAL - 1, true);
+      break;
+    case "f":
+    case "F":
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+      break;
+  }
+}
+
+document.addEventListener("keydown", function (e) {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  const nav = ["ArrowRight","ArrowLeft","ArrowDown","ArrowUp","PageDown","PageUp"," ","Home","End","f","F","Backspace"];
+  if (nav.indexOf(e.key) === -1) return;
+  e.preventDefault();
+  handleKey(e.key);
+});
+
+hitPrev.addEventListener("click", function () { prev(); this.blur(); });
+hitNext.addEventListener("click", function () { next(); this.blur(); });
+window.addEventListener("hashchange", function () { show(parseHash(), false); });
+window.addEventListener("resize", fit);
+window.addEventListener("orientationchange", fit);
+
+fit();
+show(parseHash(), true);
+</script>
+</body>
+</html>

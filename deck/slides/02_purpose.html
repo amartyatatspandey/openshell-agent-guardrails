@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { font-size: 46px; margin-bottom: 8px; }
+  .lede { margin-bottom: 22px; }
+  .pillar { border: 2px solid #1A1A1A; display: flex; flex-direction: column; }
+  .pillar .top { display: flex; align-items: baseline; gap: 12px; padding: 14px 18px 10px 18px; border-bottom: 2px solid #1A1A1A; }
+  .pillar .n { font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; color: #D9381E; line-height: 1; }
+  .pillar .t { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .pillar h3 { font-size: 21px; font-weight: 800; line-height: 1.2; padding: 14px 18px 6px 18px; }
+  .pillar p { font-size: 14.5px; line-height: 1.55; color: #333; padding: 0 18px; }
+  .pillar ul { list-style: none; padding: 10px 18px 0 18px; }
+  .pillar li { font-size: 13.5px; line-height: 1.45; color: #333; padding-left: 16px; position: relative; margin-bottom: 6px; }
+  .pillar li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; background: #D9381E; }
+  .pillar .ev { margin-top: auto; padding: 10px 18px; border-top: 1px solid #E0E0E0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #8a8a8a; letter-spacing: 0.05em; }
+  .pillar.mid { background: #FBFBFB; }
+  .strip { margin-top: 18px; }
+  /* sizing pass: fill the 720px frame */
+  .pillar p { font-size: 15.5px; }
+  .pillar li { font-size: 14.5px; margin-bottom: 8px; }
+  .pillar h3 { font-size: 23px; padding-top: 18px; }
+  .strip { margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">02 — Purpose of this deck</div>
+    <h1>This deck exists to show you three things.</h1>
+    <div class="lede">Not just that the demo works, but how I think about the problem and how I build when the tool is new.</div>
+    <div class="cols c3">
+      <div class="pillar">
+        <div class="top"><span class="n">01</span><span class="t">Understanding</span></div>
+        <h3>I understand where the gap is.</h3>
+        <p>Admission control decides what gets deployed. A running agent acts after that. I can show where each of its actions is stopped, and by what.</p>
+        <ul>
+          <li>Runtime is the layer admission never sees</li>
+          <li>OpenShell's trust model, part by part</li>
+          <li>Each control mapped to an AIControls plane</li>
+        </ul>
+        <div class="ev">EVIDENCE · SLIDES 04 – 07, 09</div>
+      </div>
+      <div class="pillar mid">
+        <div class="top"><span class="n">02</span><span class="t">Robust approach</span></div>
+        <h3>I build it like it has to hold.</h3>
+        <p>Deny by default, and evidence that comes from the runtime, never from my own script.</p>
+        <ul>
+          <li>Graded from OpenShell's OCSF log</li>
+          <li>Pinned versions, preflight before anything runs</li>
+          <li>Fake data, reserved destinations only</li>
+          <li>Honest about what is single-box</li>
+        </ul>
+        <div class="ev">EVIDENCE · SLIDES 08, 10 – 11, 14 – 15</div>
+      </div>
+      <div class="pillar">
+        <div class="top"><span class="n">03</span><span class="t">Demonstration</span></div>
+        <h3>It works, and you can check it.</h3>
+        <p>One command creates the sandbox, runs the attempts, reads the log and grades it.</p>
+        <ul>
+          <li><code>make verify</code> → 10 PASS / 0 FAIL</li>
+          <li>Exits non-zero if one control fails to block</li>
+          <li>Re-run from a fresh clone before sending</li>
+          <li>Working bonus: Kyverno decides, OpenShell enforces</li>
+        </ul>
+        <div class="ev">EVIDENCE · SLIDES 10, 12 – 13</div>
+      </div>
+    </div>
+    <div class="strip">
+      <div class="tag">Rule</div>
+      <div class="text">Every claim in this deck is either <b>re-proved by <code>make verify</code></b> on your machine, or points to <b>a file in the repo you can open</b>. Nothing here is a screenshot you have to trust.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 02 / 15</span>
+  </div>
+</div>
+</body>
+</html>

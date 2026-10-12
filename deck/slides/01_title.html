@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .inner { padding-top: 60px; }
+  .kicker { margin-bottom: 34px; font-size: 15px; }
+  h1 { font-size: 86px; line-height: 0.96; letter-spacing: -0.025em; margin-bottom: 26px; }
+  .subtitle { font-size: 22px; font-weight: 600; color: #333333; max-width: 980px; line-height: 1.4; }
+  .subtitle b { font-weight: 800; }
+  .row { display: flex; gap: 22px; margin-top: 38px; align-items: stretch; }
+  .thesis { flex: 1; }
+  .thesis .body { font-family: 'JetBrains Mono', monospace; font-size: 17px; line-height: 1.8; color: #333; }
+  .thesis .body b { color: #1A1A1A; }
+  .score { width: 250px; background: #1A1A1A; color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 18px 24px; }
+  .score .num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 64px; line-height: 1; letter-spacing: -0.03em; }
+  .score .num span { color: #F28B7A; }
+  .score .lbl { font-size: 14px; font-weight: 800; margin-top: 10px; line-height: 1.35; }
+  .score .lbl .mono { font-size: 12px; color: #F28B7A; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">Take-home for Nirmata <span>· NVIDIA OpenShell · AIControls</span></div>
+    <h1>OpenShell Agent<br>Guardrails</h1>
+    <div class="subtitle">An AI agent inside an NVIDIA OpenShell sandbox tries what it shouldn't. <b>The sandbox says no, and proves it.</b></div>
+    <div class="row">
+      <div class="box thesis">
+        <div class="label">Thesis</div>
+        <div class="body">
+          The agent <b>proposes</b>. The kernel and the policy <b>decide</b>.<br>
+          Every denial is read back from <span class="hl"><b style="color:#D9381E">OpenShell's own audit log</b></span>.<br>
+          One command. <b>Re-provable on your machine.</b>
+        </div>
+      </div>
+      <div class="score">
+        <div class="num">10<span>/</span>0</div>
+        <div class="lbl">controls PASS / FAIL<br><span class="mono">make verify · exit 0</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>AMARTYA PANDEY · FOR RITESH PATEL, NIRMATA</span>
+    <span class="poc">OPENSHELL v0.1.3 · KYVERNO AUTHZ v0.4.0</span>
+  </div>
+</div>
+</body>
+</html>

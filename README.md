@@ -28,6 +28,8 @@ make clean    # openshell sandbox delete guardrails-demo
 
 `make help` lists `setup`, `preflight`, `verify`, `demo`, and `clean`.
 
+A walkthrough deck with an interactive architecture map is in [`deck/slideshow.html`](deck/slideshow.html).
+
 `make verify` runs `scenarios/run_all.sh` inside the sandbox; it prints a `== <id>: <control> ==` label before each attempt. For the two kernel-only rows (`fs-secret-denied`, `priv-nonroot-denied`) it prints `PROBE <id> BLOCKED` only when it actually observed the permission error, and `PROBE <id> NOT-BLOCKED` otherwise. OpenShell does not send Landlock denials to `openshell logs --source sandbox`. See `policies/openshell/README.md`.
 
 Grade a log you already have, without creating a sandbox:
