@@ -43,6 +43,9 @@ result mcp-arg-flag-denied "$(mcp '{"jsonrpc":"2.0","id":4,"method":"tools/call"
 printf '%s\n' '== mcp-arg-traversal-denied: allowed tool, path outside the workspace =='
 result mcp-arg-traversal-denied "$(mcp '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"../../opt/company/prod.env"}}}')"
 
+printf '%s\n' '== mcp-malformed-fail-closed: body Kyverno cannot parse =='
+result mcp-malformed-fail-closed "$(mcp '{not json')"
+
 printf '%s\n' '== mcp-other-path-denied: POST to another path on the MCP host =='
 result mcp-other-path-denied "$(curl -m 10 -s -o /dev/null -w '%{http_code}' -X POST --data '{}' http://host.openshell.internal:8766/admin || true)"
 exit 0

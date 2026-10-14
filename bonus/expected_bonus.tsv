@@ -8,3 +8,4 @@ mcp-tool-denied	Tool not on the allowlist denied before it reached the server	MC
 mcp-arg-flag-denied	Flag-shaped argument to an allowed tool denied	MCP	security	log	middleware_denied:kyverno_guard:mcp_arg_flag_injection
 mcp-arg-traversal-denied	Path traversal argument to an allowed tool denied	MCP	security	log	middleware_denied:kyverno_guard:mcp_arg_path_traversal
 mcp-denied-never-arrived	None of the denied MCP calls reached the server	MCP	security	log	^MCP-SERVER-CHECK denied calls never arrived
+mcp-malformed-fail-closed	Body Kyverno cannot parse is denied, not let through (fail-closed)	MCP	security	log	DENIED POST http://host\.openshell\.internal:8766/mcp .*failed:true.*reason:middleware_failed

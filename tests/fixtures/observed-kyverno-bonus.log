@@ -1,0 +1,92 @@
+Warning: log buffer contains only the last 67 lines; --since results may be incomplete.
+[1791958117.235] [sandbox] [INFO ] [openshell_supervisor] Starting sandbox supervision command=["sh", "-c", "printf '%s' 'IyEvYmluL3NoCiMgUmVxdWVzdHMgT3BlblNoZWxsJ3MgbmV0d29yayBwb2xpY3kgYWRtaXRzOyBLeXZlcm5vIHRoZW4gZGVjaWRlcyBlYWNoIG9uZS4KIyBGYWtlIGRhdGEgb25seS4gUHJpbnRzIEZPUldBUkRFRCB3aGVuIHRoZSByZXF1ZXN0IHJlYWNoZWQgaXRzIGRlc3RpbmF0aW9uCiMgYW5kIEJMT0NLRUQgd2hlbiB0aGUgc2FuZGJveCBhbnN3ZXJlZCA0MDMgaW5zdGVhZC4KCnJlc3VsdCgpIHsKICBjYXNlICIkMiIgaW4KICAgIDQwMykgcHJpbnRmICclc1xuJyAiUFJPQkUgJDEgQkxPQ0tFRCIgOzsKICAgIDAwMCkgcHJpbnRmICclc1xuJyAiUFJPQkUgJDEgRVJST1IiIDs7CiAgICAqKSBwcmludGYgJyVzXG4nICJQUk9CRSAkMSBGT1JXQVJERUQgaHR0cD0kMiIgOzsKICBlc2FjCn0KCnByaW50ZiAnJXNcbicgJz09IGt5dmVybm8tYWxsb3c6IEdFVCAvcmVwb3MvZXhhbXBsZS1vcmcvZXhhbXBsZS1yZXBvID09JwphbGxvdz0kKGN1cmwgLW0gMTAgLXMgLW8gL2Rldi9udWxsIC13ICcle2h0dHBfY29kZX0nIFwKICBodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL2V4YW1wbGUtb3JnL2V4YW1wbGUtcmVwbyB8fCB0cnVlKQpwcmludGYgJyVzXG4nICJLWVZFUk5PIEFMTE9XX1BBVEggJHthbGxvd30iCgpwcmludGYgJyVzXG4nICc9PSBreXZlcm5vLXBhdGgtZGVuaWVkOiBHRVQgb3V0c2lkZSB0aGUgQ0VMIGFsbG93IHBhdGggPT0nCmRlbnk9JChjdXJsIC1tIDEwIC1zIC1vIC9kZXYvbnVsbCAtdyAnJXtodHRwX2NvZGV9JyBcCiAgaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9leGFtcGxlLW9yZy9leGFtcGxlLXJlcG8vY29udGVudHMvLmVudiB8fCB0cnVlKQpwcmludGYgJyVzXG4nICJLWVZFUk5PIERFTllfUEFUSCAke2Rlbnl9IgpyZXN1bHQga3l2ZXJuby1wYXRoLWRlbmllZCAiJGRlbnkiCgpNQ1A9aHR0cDovL2hvc3Qub3BlbnNoZWxsLmludGVybmFsOjg3NjYvbWNwCm1jcCgpIHsKICBjdXJsIC1tIDEwIC1zIC1vIC9kZXYvbnVsbCAtdyAnJXtodHRwX2NvZGV9JyAtWCBQT1NUIFwKICAgIC1IICdDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24nIC0tZGF0YSAiJDEiICIkTUNQIiB8fCB0cnVlCn0KCnByaW50ZiAnJXNcbicgJz09IG1jcC1saXN0OiB0b29scy9saXN0ICh0aGUgc2VydmVyIGFkdmVydGlzZXMgZGVsZXRlX3JlcG8gdG9vKSA9PScKcmVzdWx0IG1jcC1saXN0ICIkKG1jcCAneyJqc29ucnBjIjoiMi4wIiwiaWQiOjEsIm1ldGhvZCI6InRvb2xzL2xpc3QifScpIgoKcHJpbnRmICclc1xuJyAnPT0gbWNwLWFsbG93ZWQtZm9yd2FyZGVkOiB0b29scy9jYWxsIHNlYXJjaF9pc3N1ZXMgPT0nCnJlc3VsdCBtY3AtYWxsb3dlZC1mb3J3YXJkZWQgIiQobWNwICd7Impzb25ycGMiOiIyLjAiLCJpZCI6MiwibWV0aG9kIjoidG9vbHMvY2FsbCIsInBhcmFtcyI6eyJuYW1lIjoic2VhcmNoX2lzc3VlcyIsImFyZ3VtZW50cyI6eyJxdWVyeSI6ImxhYmVsOmJ1ZyJ9fX0nKSIKCnByaW50ZiAnJXNcbicgJz09IG1jcC10b29sLWRlbmllZDogdG9vbHMvY2FsbCBkZWxldGVfcmVwbyAobm90IG9uIHRoZSBhbGxvd2xpc3QpID09JwpyZXN1bHQgbWNwLXRvb2wtZGVuaWVkICIkKG1jcCAneyJqc29ucnBjIjoiMi4wIiwiaWQiOjMsIm1ldGhvZCI6InRvb2xzL2NhbGwiLCJwYXJhbXMiOnsibmFtZSI6ImRlbGV0ZV9yZXBvIiwiYXJndW1lbnRzIjp7InJlcG8iOiJleGFtcGxlLW9yZy9leGFtcGxlLXJlcG8ifX19JykiCgpwcmludGYgJyVzXG4nICc9PSBtY3AtYXJnLWZsYWctZGVuaWVkOiBhbGxvd2VkIHRvb2wsIGFyZ3VtZW50IHNoYXBlZCBsaWtlIGEgQ0xJIGZsYWcgPT0nCnJlc3VsdCBtY3AtYXJnLWZsYWctZGVuaWVkICIkKG1jcCAneyJqc29ucnBjIjoiMi4wIiwiaWQiOjQsIm1ldGhvZCI6InRvb2xzL2NhbGwiLCJwYXJhbXMiOnsibmFtZSI6InNlYXJjaF9pc3N1ZXMiLCJhcmd1bWVudHMiOnsicXVlcnkiOiItLW91dHB1dD0vdG1wL2R1bXAifX19JykiCgpwcmludGYgJyVzXG4nICc9PSBtY3AtYXJnLXRyYXZlcnNhbC1kZW5pZWQ6IGFsbG93ZWQgdG9vbCwgcGF0aCBvdXRzaWRlIHRoZSB3b3Jrc3BhY2UgPT0nCnJlc3VsdCBtY3AtYXJnLXRyYXZlcnNhbC1kZW5pZWQgIiQobWNwICd7Impzb25ycGMiOiIyLjAiLCJpZCI6NSwibWV0aG9kIjoidG9vbHMvY2FsbCIsInBhcmFtcyI6eyJuYW1lIjoicmVhZF9maWxlIiwiYXJndW1lbnRzIjp7InBhdGgiOiIuLi8uLi9vcHQvY29tcGFueS9wcm9kLmVudiJ9fX0nKSIKCnByaW50ZiAnJXNcbicgJz09IG1jcC1tYWxmb3JtZWQtZmFpbC1jbG9zZWQ6IGJvZHkgS3l2ZXJubyBjYW5ub3QgcGFyc2UgPT0nCnJlc3VsdCBtY3AtbWFsZm9ybWVkLWZhaWwtY2xvc2VkICIkKG1jcCAne25vdCBqc29uJykiCgpwcmludGYgJyVzXG4nICc9PSBtY3Atb3RoZXItcGF0aC1kZW5pZWQ6IFBPU1QgdG8gYW5vdGhlciBwYXRoIG9uIHRoZSBNQ1AgaG9zdCA9PScKcmVzdWx0IG1jcC1vdGhlci1wYXRoLWRlbmllZCAiJChjdXJsIC1tIDEwIC1zIC1vIC9kZXYvbnVsbCAtdyAnJXtodHRwX2NvZGV9JyAtWCBQT1NUIC0tZGF0YSAne30nIGh0dHA6Ly9ob3N0Lm9wZW5zaGVsbC5pbnRlcm5hbDo4NzY2L2FkbWluIHx8IHRydWUpIgpleGl0IDAK' | base64 -d > /tmp/kyverno-probe.sh && sh /tmp/kyverno-probe.sh"]
+[1791958117.289] [sandbox] [INFO ] [openshell_supervisor] Fetching sandbox policy via gRPC endpoint=https://127.0.0.1:17670 sandbox=guardrails-kyverno sandbox_id=43ed7b35-58d9-4da0-b121-b7dea300d6ca
+[1791958117.307] [sandbox] [INFO ] [openshell_supervisor_network::opa] Configured OPA runtime binary identity mode require_binary_identity=true source=proto
+[1791958117.307] [sandbox] [OCSF ] [ocsf] CONFIG:CONFIGURED [INFO] OPA runtime binary identity mode configured [source:proto require_binary_identity:true] [source:proto]
+[1791958117.329] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary attached backend=openshell-sandbox
+[1791958117.330] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary enforcement confirmed backend=openshell-sandbox
+[1791958117.330] [sandbox] [OCSF ] [ocsf] CONFIG:ENABLED [INFO] TLS termination enabled: ephemeral CA generated
+[1791958117.330] [sandbox] [OCSF ] [ocsf] CONFIG:READY [INFO] Policy DNS connected to isolation boundary
+[1791958117.330] [sandbox] [OCSF ] [ocsf] NET:LISTEN [INFO] 127.0.0.1:3128
+[1791958117.330] [sandbox] [WARN ] [openshell_supervisor_network::proxy] host.openshell.internal maps to a non-link-local IP; trusted-gateway SSRF exemption disabled ip=127.0.0.1
+[1791958117.338] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary agent started backend=openshell-sandbox
+[1791958117.338] [sandbox] [OCSF ] [ocsf] SSH:LISTEN [INFO]
+[1791958117.339] [sandbox] [INFO ] [openshell_supervisor] Control-mode access plane started backend=openshell-sandbox
+[1791958117.348] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] 127.0.0.1:17670
+[1791958117.350] [sandbox] [OCSF ] [ocsf] CONFIG:LOADED [INFO] Acknowledged initial policy revision as loaded [version:1] [hash:726ff49d4c2af4962c8d5bbbb1fcdbf8fb9239ea6e325196bb75348fc9848b86]
+[1791958117.357] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped api.github.com resolved=20.207.73.85 synthetic=198.18.0.2 ports=443 mapping_id=eeab3d93-71f1-4e9c-abd7-859ca51b76ac
+[1791958117.395] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> api.github.com:443 [policy:github_readonly engine:opa]
+[1791958117.411] [sandbox] [OCSF ] [ocsf] EVENT [INFO] ssh relay open (channel_id=dd6ec7a9-aae3-4f71-9062-b221d72fc9e0, target=unix:/run/openshell/ssh.sock)
+[1791958117.411] [sandbox] [OCSF ] [ocsf] SSH:OPEN [INFO] ALLOWED
+[1791958117.437] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.github.com:443/repos/example-org/example-repo [policy:github_readonly engine:l7]
+[1791958117.439] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.github.com:443/repos/example-org/example-repo [policy:github_readonly engine:middleware] [failed:false transformed:false]
+[1791958117.738] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped api.github.com resolved=20.207.73.85 synthetic=198.18.0.2 ports=443 mapping_id=bb7df2db-d011-4ce5-84fb-b71ceda8180d
+[1791958117.773] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> api.github.com:443 [policy:github_readonly engine:opa]
+[1791958117.811] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.github.com:443/repos/example-org/example-repo/contents/.env [policy:github_readonly engine:l7]
+[1791958117.813] [sandbox] [OCSF ] [ocsf] HTTP:GET [MED] DENIED GET http://api.github.com:443/repos/example-org/example-repo/contents/.env [policy:github_readonly engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:kyverno_path_denied]
+[1791958117.813] [sandbox] [OCSF ] [ocsf] FINDING:CREATE [HIGH] "External middleware finding" [type:kyverno-guard.finding count:1 middleware:kyverno_guard]
+[1791958117.823] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=61f0c042-42e0-48cd-8a32-6deac671f989
+[1791958117.826] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.826] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.828] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false]
+[1791958117.837] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=68a14d12-cedb-46cc-8711-ec2188e285d4
+[1791958117.840] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.840] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.842] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false]
+[1791958117.851] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=5ca8ffb7-c395-4823-a20e-9cc85bd6bd5d
+[1791958117.853] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.854] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.855] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_tool_denied]
+[1791958117.855] [sandbox] [OCSF ] [ocsf] FINDING:CREATE [HIGH] "External middleware finding" [type:kyverno-guard.finding count:1 middleware:kyverno_guard]
+[1791958117.863] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=5d39d1c9-e9a4-4cee-bea9-c1d530382719
+[1791958117.866] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.866] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.868] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_arg_flag_injection]
+[1791958117.868] [sandbox] [OCSF ] [ocsf] FINDING:CREATE [HIGH] "External middleware finding" [type:kyverno-guard.finding count:1 middleware:kyverno_guard]
+[1791958117.876] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=6a856cd6-7d1f-4798-9795-201a323226d5
+[1791958117.879] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.879] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.881] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_arg_path_traversal]
+[1791958117.881] [sandbox] [OCSF ] [ocsf] FINDING:CREATE [HIGH] "External middleware finding" [type:kyverno-guard.finding count:1 middleware:kyverno_guard]
+[1791958117.889] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=1dc9306c-ce2f-4995-882a-77791f0a84dd
+[1791958117.892] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.892] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:l7]
+[1791958117.894] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:true transformed:false reason:middleware_failed: external_service_error]
+[1791958117.894] [sandbox] [OCSF ] [ocsf] FINDING:CREATE [HIGH] "Supervisor middleware failure" [type:openshell.middleware.failure]
+[1791958117.902] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped host.openshell.internal resolved=127.0.0.1 synthetic=198.18.0.3 ports=8766 mapping_id=c24cb758-700d-4449-bf5c-38f5f8346563
+[1791958117.904] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> host.openshell.internal:8766 [policy:mcp_demo engine:opa]
+[1791958117.905] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://host.openshell.internal:8766/admin [policy:mcp_demo engine:l7] [reason:L7_REQUEST deny POST host.openshell.internal:8766/admin reason=POST /admin not permitted by policy]
+[1791958117.915] [sandbox] [OCSF ] [ocsf] SSH:FAIL [LOW]
+[1791958117.915] [sandbox] [OCSF ] [ocsf] EVENT [INFO] ssh relay closed (channel_id=dd6ec7a9-aae3-4f71-9062-b221d72fc9e0, target=unix:/run/openshell/ssh.sock)
+[1791958117.921] [sandbox] [INFO ] [openshell_supervisor] Canonical process exited; retaining control-mode access plane backend=openshell-sandbox
+
+Created sandbox: guardrails-kyverno
+
+  [0.0s] Requesting compute...
+[0.0s] Sandbox allocated
+[0.0s] Pulling image openshell-guardrails-agent:dev
+[0.0s] Image already present
+[0.1s] Starting sandbox Container created
+== kyverno-allow: GET /repos/example-org/example-repo ==
+KYVERNO ALLOW_PATH 404
+== kyverno-path-denied: GET outside the CEL allow path ==
+KYVERNO DENY_PATH 403
+PROBE kyverno-path-denied BLOCKED
+== mcp-list: tools/list (the server advertises delete_repo too) ==
+PROBE mcp-list FORWARDED http=200
+== mcp-allowed-forwarded: tools/call search_issues ==
+PROBE mcp-allowed-forwarded FORWARDED http=200
+== mcp-tool-denied: tools/call delete_repo (not on the allowlist) ==
+PROBE mcp-tool-denied BLOCKED
+== mcp-arg-flag-denied: allowed tool, argument shaped like a CLI flag ==
+PROBE mcp-arg-flag-denied BLOCKED
+== mcp-arg-traversal-denied: allowed tool, path outside the workspace ==
+PROBE mcp-arg-traversal-denied BLOCKED
+== mcp-malformed-fail-closed: body Kyverno cannot parse ==
+PROBE mcp-malformed-fail-closed BLOCKED
+== mcp-other-path-denied: POST to another path on the MCP host ==
+PROBE mcp-other-path-denied BLOCKED
+MCP-SERVER listening on 127.0.0.1:8766
+MCP-SERVER served tools/list
+MCP-SERVER served tools/call search_issues arguments={"query": "label:bug"}
+MCP-SERVER-CHECK denied calls never arrived
