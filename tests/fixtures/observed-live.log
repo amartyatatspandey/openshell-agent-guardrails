@@ -1,13 +1,61 @@
-# Verbatim OCSF lines captured from a real OpenShell v0.1.3 sandbox on 2026-10-10
-# (Docker Desktop, macOS arm64) under policies/openshell/agent-policy.yaml.
-# PROBE lines stand in for the two kernel-only controls the supervisor log does not carry.
-[1791647708.030] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(0) -> example.com:443 [reason:transparent_tcp_policy_denied]
-[1791647708.034] [sandbox] [OCSF ] [ocsf] NET:REFUSE [MED] DENIED api.github.com [reason:policy_dns_ineligible]
-[1791647708.040] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(0) -> 169.254.169.254:80 [reason:transparent_tcp_policy_denied]
-[1791647778.890] [sandbox] [OCSF ] [ocsf] HTTP:DELETE [MED] DENIED DELETE http://api.github.com:443/repos/nirmata/kyverno [policy:github_readonly engine:l7] [reason:L7_REQUEST deny DELETE api.github.com:443/repos/nirmata/kyverno reason=DELETE /repos/nirmata/kyverno not permitted by policy]
-[1791647778.968] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://api.github.com:443/repos/nirmata/kyverno/issues [policy:github_readonly engine:l7] [reason:L7_REQUEST deny POST api.github.com:443/repos/nirmata/kyverno/issues reason=POST /repos/nirmata/kyverno/issues not permitted by policy]
-[1791647779.042] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(0) -> api.github.com:443 [reason:transparent_tcp_policy_denied]
-[1791647834.863] [sandbox] [OCSF ] [ocsf] HTTP:GET [HIGH] DENIED GET  [policy:public_echo engine:credential-binding] [reason:credential_endpoint_mismatch]
-[1791647834.863] [sandbox] [OCSF ] [ocsf] FINDING:BLOCKED [HIGH] "Provider credential used at an unauthorized endpoint" [type:openshell.provider_credential.endpoint_mismatch]
+Warning: log buffer contains only the last 49 lines; --since results may be incomplete.
+[1791958235.992] [sandbox] [INFO ] [openshell_supervisor] Starting sandbox supervision command=["sh", "-c", "printf '%s' 'IyEvYmluL3NoCiMgT25lIGxhYmVsbGVkIGRlbmlhbCBhdHRlbXB0IHBlciBjb250cm9sLiBSdW4gd2l0aCBQT1NJWCBzaCAoZGFzaCkuCiMgRXhwZWN0ZWQgZmFpbHVyZXMgYXJlIGlnbm9yZWQgc28gZXZlcnkgcHJvYmUgc3RpbGwgcnVuczsgdmVyaWZ5LnNoIGdyYWRlcyB0aGUgcmVzdWx0LgoKcHJpbnRmICclc1xuJyAnPT0gY3JlZC11bmF1dGhvcml6ZWQtZW5kcG9pbnQ6IFByb3ZpZGVyIGNyZWRlbnRpYWwgYmxvY2tlZCBhdCBhbiB1bmF1dGhvcml6ZWQgZW5kcG9pbnQgPT0nCnByaW50ZiAnJXNcbicgJz09IGNyZWQtZW5kcG9pbnQtbWlzbWF0Y2g6IENyZWRlbnRpYWwgcmVqZWN0ZWQgd2hlbiB0aGUgcmVxdWVzdCBmYWxscyBvdXRzaWRlIHRoZSBwcm92aWRlciBlbmRwb2ludCBiaW5kaW5nID09JwpjdXJsIC1tIDEwIC1zIC1vIC9kZXYvbnVsbCBcCiAgLUggIkF1dGhvcml6YXRpb246IEJlYXJlciAke0dJVEhVQl9UT0tFTjotfSIgXAogIGh0dHBzOi8vaHR0cGJpbi5vcmcvID4vZGV2L251bGwgMj4mMSB8fCB0cnVlCgpwcmludGYgJyVzXG4nICc9PSBlZ3Jlc3MtZGVmYXVsdC1kZW55OiBEZWZhdWx0LWRlbnkgZWdyZXNzIHRvIGEgaG9zdCB0aGF0IG5vIHBvbGljeSBhbGxvd3MgPT0nCmN1cmwgLW0gMTAgLXMgLW8gL2Rldi9udWxsIGh0dHBzOi8vZXhhbXBsZS5jb20vID4vZGV2L251bGwgMj4mMSB8fCB0cnVlCgpwcmludGYgJyVzXG4nICc9PSBkbnMtcG9saWN5LXJlZnVzZTogRE5TIGFuc3dlciByZWZ1c2VkIGJlY2F1c2UgdGhlIG5hbWUgaXMgbm90IGVsaWdpYmxlIGZvciBwb2xpY3kgRE5TID09JwpkaWcgK3RpbWU9MyArdHJpZXM9MSBub3QtZWxpZ2libGUuaW52YWxpZCA+L2Rldi9udWxsIDI+JjEgfHwgdHJ1ZQoKcHJpbnRmICclc1xuJyAnPT0gbWV0YWRhdGEtYWRkcmVzcy1yZWZ1c2VkOiBDbG91ZCBtZXRhZGF0YSBsaW5rLWxvY2FsIGFkZHJlc3MgcmVmdXNlZCA9PScKY3VybCAtbSAxMCAtcyAtbyAvZGV2L251bGwgaHR0cDovLzE2OS4yNTQuMTY5LjI1NC8gPi9kZXYvbnVsbCAyPiYxIHx8IHRydWUKCnByaW50ZiAnJXNcbicgJz09IGw3LWRlbGV0ZS1kZW5pZWQ6IEdpdEh1YiBERUxFVEUgZGVuaWVkIGJ5IHRoZSByZWFkLW9ubHkgTDcgcnVsZSA9PScKY3VybCAtbSAxMCAtcyAtbyAvZGV2L251bGwgLVggREVMRVRFIFwKICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICR7R0lUSFVCX1RPS0VOOi19IiBcCiAgaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9leGFtcGxlLW9yZy9leGFtcGxlLXJlcG8gPi9kZXYvbnVsbCAyPiYxIHx8IHRydWUKCnByaW50ZiAnJXNcbicgJz09IGw3LXBvc3QtZGVuaWVkOiBHaXRIdWIgUE9TVCBkZW5pZWQgYnkgdGhlIHJlYWQtb25seSBMNyBydWxlID09JwpjdXJsIC1tIDEwIC1zIC1vIC9kZXYvbnVsbCAtWCBQT1NUIFwKICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICR7R0lUSFVCX1RPS0VOOi19IiBcCiAgLUggJ0NvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbicgXAogIC0tZGF0YSAneyJ0aXRsZSI6InByb2JlIn0nIFwKICBodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL2V4YW1wbGUtb3JnL2V4YW1wbGUtcmVwby9pc3N1ZXMgPi9kZXYvbnVsbCAyPiYxIHx8IHRydWUKCnByaW50ZiAnJXNcbicgJz09IGJpbmFyeS1pZGVudGl0eS1kZW5pZWQ6IHB5dGhvbjMgZGVuaWVkIHRvIGFwaS5naXRodWIuY29tOyBvbmx5IHRoZSBhbGxvd2VkIGJpbmFyeSBtYXkgb3BlbiB0aGF0IGVuZHBvaW50ID09JwpweXRob24zIC1jICdpbXBvcnQgdXJsbGliLnJlcXVlc3Q7IHVybGxpYi5yZXF1ZXN0LnVybG9wZW4oImh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vIiwgdGltZW91dD0xMCknID4vZGV2L251bGwgMj4mMSB8fCB0cnVlCgpwcmludGYgJyVzXG4nICc9PSBmcy1zZWNyZXQtZGVuaWVkOiBSZWFkIG9mIHRoZSB3b3JsZC1yZWFkYWJsZSBwbGFudGVkIHNlY3JldCBkZW5pZWQgYnkgTGFuZGxvY2sgPT0nCmZzX2Vycj0vdG1wL3Byb2JlLWZzLXNlY3JldC5lcnIKaWYgY2F0IC9vcHQvY29tcGFueS9wcm9kLmVudiA+L2Rldi9udWxsIDI+IiRmc19lcnIiOyB0aGVuCiAgcHJpbnRmICclc1xuJyAnUFJPQkUgZnMtc2VjcmV0LWRlbmllZCBOT1QtQkxPQ0tFRCcKZWxpZiBncmVwIC1FIC1xIC1lICdQZXJtaXNzaW9uIGRlbmllZHxPcGVyYXRpb24gbm90IHBlcm1pdHRlZCcgIiRmc19lcnIiOyB0aGVuCiAgcHJpbnRmICclc1xuJyAnUFJPQkUgZnMtc2VjcmV0LWRlbmllZCBCTE9DS0VEJwplbHNlCiAgcHJpbnRmICclc1xuJyAnUFJPQkUgZnMtc2VjcmV0LWRlbmllZCBOT1QtQkxPQ0tFRCcKZmkKCnByaW50ZiAnJXNcbicgJz09IHByaXYtbm9ucm9vdC1kZW5pZWQ6IFByaXZpbGVnZSBnYWluIGRlbmllZDsgd29ya2xvYWQgc3RheXMgbm9uLXJvb3QgPT0nCnByaXZfZXJyPS90bXAvcHJvYmUtcHJpdi5lcnIKaWYgcHl0aG9uMyAtYyAnaW1wb3J0IG9zOyBvcy5zZXR1aWQoMCknID4vZGV2L251bGwgMj4iJHByaXZfZXJyIjsgdGhlbgogIHByaW50ZiAnJXNcbicgJ1BST0JFIHByaXYtbm9ucm9vdC1kZW5pZWQgTk9ULUJMT0NLRUQnCmVsaWYgZ3JlcCAtRSAtcSAtZSAnT3BlcmF0aW9uIG5vdCBwZXJtaXR0ZWR8UGVybWlzc2lvbiBkZW5pZWR8UGVybWlzc2lvbkVycm9yJyAiJHByaXZfZXJyIjsgdGhlbgogIHByaW50ZiAnJXNcbicgJ1BST0JFIHByaXYtbm9ucm9vdC1kZW5pZWQgQkxPQ0tFRCcKZWxzZQogIHByaW50ZiAnJXNcbicgJ1BST0JFIHByaXYtbm9ucm9vdC1kZW5pZWQgTk9ULUJMT0NLRUQnCmZpCgpybSAtZiAiJGZzX2VyciIgIiRwcml2X2VyciIKZXhpdCAwCg==' | base64 -d > /tmp/run_all.sh && sh /tmp/run_all.sh"]
+[1791958236.046] [sandbox] [INFO ] [openshell_supervisor] Fetching sandbox policy via gRPC endpoint=https://127.0.0.1:17670 sandbox=guardrails-demo sandbox_id=4d0d959e-70c5-4b0b-8987-b29f8187bcd5
+[1791958236.061] [sandbox] [INFO ] [openshell_supervisor_network::opa] Configured OPA runtime binary identity mode require_binary_identity=true source=proto
+[1791958236.061] [sandbox] [OCSF ] [ocsf] CONFIG:CONFIGURED [INFO] OPA runtime binary identity mode configured [source:proto require_binary_identity:true] [source:proto]
+[1791958236.074] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary attached backend=openshell-sandbox
+[1791958236.075] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary enforcement confirmed backend=openshell-sandbox
+[1791958236.075] [sandbox] [OCSF ] [ocsf] CONFIG:ENABLED [INFO] TLS termination enabled: ephemeral CA generated
+[1791958236.075] [sandbox] [OCSF ] [ocsf] CONFIG:READY [INFO] Policy DNS connected to isolation boundary
+[1791958236.075] [sandbox] [OCSF ] [ocsf] NET:LISTEN [INFO] 127.0.0.1:3128
+[1791958236.075] [sandbox] [WARN ] [openshell_supervisor_network::proxy] host.openshell.internal maps to a non-link-local IP; trusted-gateway SSRF exemption disabled ip=127.0.0.1
+[1791958236.082] [sandbox] [INFO ] [openshell_supervisor] Isolation boundary agent started backend=openshell-sandbox
+[1791958236.083] [sandbox] [OCSF ] [ocsf] SSH:LISTEN [INFO]
+[1791958236.083] [sandbox] [INFO ] [openshell_supervisor] Control-mode access plane started backend=openshell-sandbox
+[1791958236.088] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] 127.0.0.1:17670
+[1791958236.090] [sandbox] [OCSF ] [ocsf] CONFIG:LOADED [INFO] Acknowledged initial policy revision as loaded [version:1] [hash:e1ea8d54cc968d28bb807f84ee9219393382b3a94010a29d55553d1ee6078d67]
+[1791958236.098] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped httpbin.org resolved=3.225.83.162,18.233.182.23,34.227.237.26,52.21.224.34,52.207.85.126,54.159.186.149,98.89.203.252,100.56.179.159 synthetic=198.18.0.2 ports=443 mapping_id=9635230f-3d00-4353-a548-6c03432454af
+[1791958236.146] [sandbox] [OCSF ] [ocsf] EVENT [INFO] ssh relay open (channel_id=974a5718-0187-41fe-973b-711949ce68d2, target=unix:/run/openshell/ssh.sock)
+[1791958236.146] [sandbox] [OCSF ] [ocsf] SSH:OPEN [INFO] ALLOWED
+[1791958236.368] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> httpbin.org:443 [policy:public_echo engine:opa]
+[1791958236.956] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://httpbin.org:443/ [policy:public_echo engine:l7]
+[1791958236.957] [sandbox] [OCSF ] [ocsf] HTTP:GET [HIGH] DENIED GET  [policy:public_echo engine:credential-binding] [reason:credential_endpoint_mismatch]
+[1791958236.957] [sandbox] [OCSF ] [ocsf] FINDING:BLOCKED [HIGH] "Provider credential used at an unauthorized endpoint" [type:openshell.provider_credential.endpoint_mismatch]
+[1791958236.973] [sandbox] [OCSF ] [ocsf] NET:REFUSE [MED] DENIED example.com [reason:policy_dns_ineligible]
+[1791958236.973] [sandbox] [OCSF ] [ocsf] CONFIG:OBSERVATION [INFO] Policy DNS staged unapproved name example.com synthetic=198.18.0.3 for TCP policy review
+[1791958236.976] [sandbox] [WARN ] [openshell_supervisor_network::proxy] Denied staged transparent connection destination=198.18.0.3:443 reason=endpoint example.com:443 is not allowed by any policy
+[1791958236.976] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(0) -> example.com:443 [reason:transparent_tcp_policy_denied]
+[1791958236.989] [sandbox] [OCSF ] [ocsf] NET:REFUSE [MED] DENIED not-eligible.invalid [reason:policy_dns_ineligible]
+[1791958236.989] [sandbox] [OCSF ] [ocsf] CONFIG:OBSERVATION [INFO] Policy DNS staged unapproved name not-eligible.invalid synthetic=198.18.0.4 for TCP policy review
+[1791958237.010] [sandbox] [WARN ] [openshell_supervisor_network::proxy] Denied staged transparent connection destination=169.254.169.254:80 reason=endpoint 169.254.169.254:80 is not allowed by any policy
+[1791958237.010] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(0) -> 169.254.169.254:80 [reason:transparent_tcp_policy_denied]
+[1791958237.023] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped api.github.com resolved=20.207.73.85 synthetic=198.18.0.5 ports=443 mapping_id=ad2b9bf1-bdf8-4dab-829b-921bca73270c
+[1791958237.056] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> api.github.com:443 [policy:github_readonly engine:opa]
+[1791958237.095] [sandbox] [OCSF ] [ocsf] HTTP:DELETE [MED] DENIED DELETE http://api.github.com:443/repos/example-org/example-repo [policy:github_readonly engine:l7] [reason:L7_REQUEST deny DELETE api.github.com:443/repos/example-org/example-repo reason=DELETE /repos/example-org/example-repo not permitted by policy]
+[1791958237.105] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped api.github.com resolved=20.207.73.85 synthetic=198.18.0.5 ports=443 mapping_id=b769950e-1296-4ad9-975d-edaee4557fda
+[1791958237.149] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/curl(0) -> api.github.com:443 [policy:github_readonly engine:opa]
+[1791958237.183] [sandbox] [OCSF ] [ocsf] HTTP:POST [MED] DENIED POST http://api.github.com:443/repos/example-org/example-repo/issues [policy:github_readonly engine:l7] [reason:L7_REQUEST deny POST api.github.com:443/repos/example-org/example-repo/issues reason=POST /repos/example-org/example-repo/issues not permitted by policy]
+[1791958237.230] [sandbox] [OCSF ] [ocsf] CONFIG:PUBLISHED [INFO] Policy DNS mapped api.github.com resolved=20.207.73.85 synthetic=198.18.0.5 ports=443 mapping_id=79b0e45f-ad8b-495e-946d-ab0dfc9fbd33
+[1791958237.248] [sandbox] [WARN ] [openshell_supervisor_network::proxy] Denied staged transparent connection destination=198.18.0.5:443 reason=binary '/usr/bin/python3.12' not allowed in policy '_provider_demo_github' (ancestors: [/usr/bin/dash -> /usr/bin/dash], cmdline: [/tmp/run_all.sh]). SYMLINK HINT: the binary path is the kernel-resolved target from /proc/<pid>/exe, not the symlink. If your policy specifies a symlink (e.g., /usr/bin/python3) but the actual binary is /usr/bin/python3.11, either: (1) use the canonical path in your policy (run 'readlink -f /usr/bin/python3' inside the sandbox), or (2) ensure symlink resolution is working (check sandbox logs for 'Cannot access container filesystem'); binary '/usr/bin/python3.12' not allowed in policy 'github_readonly' (ancestors: [/usr/bin/dash -> /usr/bin/dash], cmdline: [/tmp/run_all.sh]). SYMLINK HINT: the binary path is the kernel-resolved target from /proc/<pid>/exe, not the symlink. If your policy specifies a symlink (e.g., /usr/bin/python3) but the actual binary is /usr/bin/python3.11, either: (1) use the canonical path in your policy (run 'readlink -f /usr/bin/python3' inside the sandbox), or (2) ensure symlink resolution is working (check sandbox logs for 'Cannot access container filesystem')
+[1791958237.248] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(0) -> api.github.com:443 [reason:transparent_tcp_policy_denied]
+[1791958237.270] [sandbox] [OCSF ] [ocsf] EVENT [INFO] ssh relay closed (channel_id=974a5718-0187-41fe-973b-711949ce68d2, target=unix:/run/openshell/ssh.sock)
+[1791958237.270] [sandbox] [OCSF ] [ocsf] SSH:FAIL [LOW]
+[1791958237.273] [sandbox] [INFO ] [openshell_supervisor] Canonical process exited; retaining control-mode access plane backend=openshell-sandbox
+Created sandbox: guardrails-demo
+  [0.0s] Requesting compute...
+[0.0s] Sandbox allocated
+[0.0s] Pulling image openshell-guardrails-agent:dev
+[0.0s] Image already present
+[0.1s] Starting sandbox Container created
+== cred-unauthorized-endpoint: Provider credential blocked at an unauthorized endpoint ==
+== cred-endpoint-mismatch: Credential rejected when the request falls outside the provider endpoint binding ==
+== egress-default-deny: Default-deny egress to a host that no policy allows ==
+== dns-policy-refuse: DNS answer refused because the name is not eligible for policy DNS ==
+== metadata-address-refused: Cloud metadata link-local address refused ==
+== l7-delete-denied: GitHub DELETE denied by the read-only L7 rule ==
+== l7-post-denied: GitHub POST denied by the read-only L7 rule ==
+== binary-identity-denied: python3 denied to api.github.com; only the allowed binary may open that endpoint ==
+== fs-secret-denied: Read of the world-readable planted secret denied by Landlock ==
 PROBE fs-secret-denied BLOCKED
+== priv-nonroot-denied: Privilege gain denied; workload stays non-root ==
 PROBE priv-nonroot-denied BLOCKED

@@ -156,6 +156,20 @@ fail_count=0
 pass_count=0
 row_count=0
 
+# Record what was graded, for scripts/evidence.sh: every row's result and the
+# exact line that matched it.
+RUN_DIR="${ROOT}/.out/last-run"
+mkdir -p "$RUN_DIR"
+printf '%s\n' "$corpus" >"${RUN_DIR}/corpus.log"
+printf '%s\n' "$gate_out" >"${RUN_DIR}/gate.txt"
+{
+  printf 'policy=%s\n' "${POLICY#"${ROOT}/"}"
+  printf 'events=%s\n' "${EVENTS#"${ROOT}/"}"
+  printf 'sandbox=%s\n' "${sandbox_name:-offline}"
+  printf 'mode=%s\n' "$([ -n "${VERIFY_LOG_FILE:-}" ] && echo "offline:${VERIFY_LOG_FILE#"${ROOT}/"}" || { [ "$recheck" -eq 1 ] && echo recheck || echo live; })"
+} >"${RUN_DIR}/meta.txt"
+: >"${RUN_DIR}/matrix.tsv"
+
 while IFS="$(printf '\t')" read -r id control plane domain kind pattern; do
   [ -n "$id" ] || continue
   case "$id" in
@@ -164,11 +178,15 @@ while IFS="$(printf '\t')" read -r id control plane domain kind pattern; do
   esac
   row_count=$((row_count + 1))
   result="FAIL"
-  if printf '%s\n' "$corpus" | grep -E -q -e "$pattern"; then
+  matched=""
+  if matched="$(printf '%s\n' "$corpus" | grep -E -m 1 -e "$pattern")"; then
     result="PASS"
-  elif [ "$kind" = "exit-code" ] && printf '%s\n' "$corpus" | grep -E -q -e "PROBE ${id} BLOCKED"; then
+  elif [ "$kind" = "exit-code" ] && matched="$(printf '%s\n' "$corpus" | grep -E -m 1 -e "PROBE ${id} BLOCKED")"; then
     result="PASS"
+  else
+    matched=""
   fi
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$id" "$plane" "$domain" "$kind" "$result" "$matched" >>"${RUN_DIR}/matrix.tsv"
   if [ "$result" = "PASS" ]; then
     pass_count=$((pass_count + 1))
   else
