@@ -1,4 +1,4 @@
-.PHONY: help setup preflight verify demo clean kyverno kyverno-stop
+.PHONY: help setup preflight verify demo clean kyverno kyverno-stop policy-gate policy-sign policy-tamper
 
 IMAGE ?= openshell-guardrails-agent:dev
 PROVIDER ?= demo-github
@@ -12,6 +12,9 @@ help:
 	  'demo       verify, plus the agent attempts and the raw audit-log denials' \
 	  'kyverno    Register kyverno-guard and probe the CEL path rule' \
 	  'kyverno-stop  Remove that registration and stop the bonus processes' \
+	  'policy-gate   Prove agent-policy.yaml is inside the operator boundary and check its review signature' \
+	  'policy-sign   Re-sign reviewed policies (refuses anything outside the boundary)' \
+	  'policy-tamper Edit copies of the policy seven ways and show the gate refuses every one' \
 	  'clean      Delete the guardrails-demo sandbox'
 
 preflight:
@@ -34,3 +37,12 @@ kyverno-stop:
 
 clean:
 	openshell sandbox delete $(SANDBOX_NAME)
+
+policy-gate:
+	bash scripts/policy-gate.sh
+
+policy-sign:
+	bash scripts/policy-sign.sh
+
+policy-tamper:
+	bash scripts/policy-tamper.sh

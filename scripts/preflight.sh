@@ -104,10 +104,24 @@ check_openshell() {
   esac
 }
 
+check_policy_gate_tools() {
+  if command -v openshell-prover >/dev/null 2>&1 || [ -x /opt/homebrew/opt/openshell/bin/openshell-prover ]; then
+    ok "openshell-prover present (policy containment proofs)"
+  else
+    fail "openshell-prover not found. It ships with OpenShell ${PINNED_VERSION}; reinstall the pin."
+  fi
+  if command -v ssh-keygen >/dev/null 2>&1; then
+    ok "ssh-keygen present (policy review signatures)"
+  else
+    fail "ssh-keygen not found. Install OpenSSH; the policy gate verifies review signatures with ssh-keygen -Y verify."
+  fi
+}
+
 note "OpenShell guardrails preflight (read-only, pin ${PINNED_VERSION})"
 check_docker
 check_host_networking
 check_openshell
+check_policy_gate_tools
 
 if [ "$failures" -ne 0 ]; then
   note "${failures} check(s) failed. Fix the items above and rerun. Nothing was changed."

@@ -4,7 +4,7 @@
 set -euo pipefail
 
 ROOT="$(unset CDPATH; cd -- "$(dirname -- "$0")" && pwd)"
-EVENTS="${ROOT}/expected_events.tsv"
+EVENTS="${EVENTS:-${ROOT}/expected_events.tsv}"
 SCENARIO="${ROOT}/scenarios/run_all.sh"
 IMAGE="${IMAGE:-openshell-guardrails-agent:dev}"
 POLICY="${POLICY:-${ROOT}/policies/openshell/agent-policy.yaml}"
@@ -15,9 +15,12 @@ usage() {
   cat <<'EOF'
 usage: ./verify.sh [--sandbox NAME]
 
-Default mode creates sandbox NAME (default: guardrails-demo) from the demo
-image, policy, and fake-token provider, runs scenarios/run_all.sh inside it,
-waits 2 seconds, and grades the audit log.
+Every mode first runs scripts/policy-gate.sh on POLICY (Developer plane:
+openshell-prover containment proof + review signature). Default mode then
+creates sandbox NAME (default: guardrails-demo) from the demo image, policy,
+and fake-token provider, runs scenarios/run_all.sh inside it, waits 2
+seconds, and grades the audit log. If the gate refuses the policy, no
+sandbox is created and every row fails.
 
 --sandbox NAME   Re-check an existing sandbox. Does not create one and does
                  not run probes.
@@ -68,17 +71,31 @@ if [ ! -f "$EVENTS" ]; then
 fi
 
 corpus=""
+log_corpus=""
 scenario_rc=0
+
+# Developer plane, before anything runs: is this policy proven inside the
+# operator boundary, and is it the exact text someone reviewed and signed?
+set +e
+gate_out="$(bash "${ROOT}/scripts/policy-gate.sh" "$POLICY" 2>&1)"
+gate_rc=$?
+set -e
+echo "----- policy gate (Developer plane) -----"
+printf '%s\n' "$gate_out"
+echo
 
 if [ -n "${VERIFY_LOG_FILE:-}" ]; then
   if [ ! -f "$VERIFY_LOG_FILE" ]; then
     echo "VERIFY_LOG_FILE does not exist: ${VERIFY_LOG_FILE}" >&2
     exit 2
   fi
-  corpus="$(strip_ansi <"$VERIFY_LOG_FILE")"
+  log_corpus="$(strip_ansi <"$VERIFY_LOG_FILE")"
 else
   if [ "$recheck" -eq 1 ]; then
-    corpus="$(openshell logs "$sandbox_name" --since 10m --source sandbox 2>&1 | strip_ansi)"
+    log_corpus="$(openshell logs "$sandbox_name" --since 10m --source sandbox 2>&1 | strip_ansi)"
+  elif [ "$gate_rc" -ne 0 ]; then
+    echo "policy gate refused ${POLICY#"${ROOT}/"}: no sandbox created"
+    sandbox_name="not created"
   else
     if [ ! -f "$SCENARIO" ]; then
       echo "add probes: ${SCENARIO} is missing. Add the operator-supplied probe script. verify.sh only observes and reports denials."
@@ -109,7 +126,7 @@ else
     sleep 2
     audit="$(openshell logs "$name" --since 10m --source sandbox 2>&1 | strip_ansi || true)"
     scenario_text="$(strip_ansi <"$scenario_out")"
-    corpus="${audit}
+    log_corpus="${audit}
 ${scenario_text}"
     sandbox_name="$name"
     if [ "$scenario_rc" -eq 2 ]; then
@@ -128,9 +145,12 @@ ${scenario_text}"
   fi
 fi
 
+corpus="${gate_out}
+${log_corpus}"
+
 printf '%s\n' "sandbox: ${sandbox_name:-offline}"
-printf '%s\n' "ID                         PLANE   DOMAIN      KIND        RESULT  CONTROL"
-printf '%s\n' "-------------------------  ------  ----------  ----------  ------  -------"
+printf '%s\n' "ID                         PLANE      DOMAIN      KIND        RESULT  CONTROL"
+printf '%s\n' "-------------------------  ---------  ----------  ----------  ------  -------"
 
 fail_count=0
 pass_count=0
@@ -154,7 +174,7 @@ while IFS="$(printf '\t')" read -r id control plane domain kind pattern; do
   else
     fail_count=$((fail_count + 1))
   fi
-  printf '%-25s  %-6s  %-10s  %-10s  %-6s  %s\n' "$id" "$plane" "$domain" "$kind" "$result" "$control"
+  printf '%-25s  %-9s  %-10s  %-10s  %-6s  %s\n' "$id" "$plane" "$domain" "$kind" "$result" "$control"
 done <"$EVENTS"
 
 printf '%s\n' "${pass_count} PASS, ${fail_count} FAIL (${row_count} rows)"
