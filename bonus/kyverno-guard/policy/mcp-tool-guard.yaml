@@ -1,0 +1,44 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: mcp-tool-guard
+spec:
+  failurePolicy: Fail
+  evaluation:
+    mode: HTTP
+  # OpenShell already limits the agent to POST /mcp on this host. This policy
+  # decides what may be asked once it is there: which tool, with which
+  # arguments. It reads the JSON-RPC body that kyverno-guard forwards. A body
+  # that is not JSON makes evaluation fail, and OpenShell fails closed.
+  #
+  # matchConditions matter: in kyverno-authz v0.4.0 a policy that answers
+  # http.Allowed() for a request decides it, so every policy here must only
+  # match its own traffic.
+  matchConditions:
+    - name: mcp-endpoint-only
+      expression: >
+        object.attributes.host.startsWith("host.openshell.internal") &&
+        object.attributes.method == "POST" && object.attributes.path == "/mcp"
+  variables:
+    - name: rpc
+      expression: json.Unmarshal(string(object.attributes.body))
+    - name: isCall
+      expression: has(variables.rpc.method) && variables.rpc.method == "tools/call"
+    - name: tool
+      expression: >
+        variables.isCall && has(variables.rpc.params.name) ? string(variables.rpc.params.name) : ""
+    - name: args
+      expression: >
+        variables.isCall && has(variables.rpc.params.arguments) ? variables.rpc.params.arguments : {}
+  validations:
+    - expression: >
+        !variables.isCall
+          ? http.Allowed().Response()
+          : !(variables.tool in ["search_issues", "read_file"])
+            ? http.Denied("mcp_tool_denied").Response()
+            : variables.args.exists(k, type(variables.args[k]) == string && string(variables.args[k]).startsWith("-"))
+              ? http.Denied("mcp_arg_flag_injection").Response()
+              : variables.args.exists(k, k == "path" && type(variables.args[k]) == string &&
+                  (string(variables.args[k]).contains("..") || string(variables.args[k]).startsWith("/")))
+                ? http.Denied("mcp_arg_path_traversal").Response()
+                : http.Allowed().Response()

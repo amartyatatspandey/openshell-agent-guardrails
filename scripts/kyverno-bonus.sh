@@ -15,12 +15,21 @@ POLICY="${ROOT}/policies/openshell/agent-policy-kyverno.yaml"
 PID_FILE="${ROOT}/bonus/kyverno-guard/kyverno-guard.pid"
 BIN="${ROOT}/bonus/kyverno-guard/bin/kyverno-guard"
 LOG_FILE="${ROOT}/bonus/kyverno-guard/kyverno-guard.log"
+MCP_PORT="${MCP_PORT:-8766}"
+MCP_PID_FILE="${ROOT}/bonus/mcp-demo/server.pid"
+MCP_LOG="${ROOT}/bonus/mcp-demo/server.log"
 GATEWAY_CONFIG="${OPENSHELL_GATEWAY_CONFIG:-/opt/homebrew/var/openshell/gateway.toml}"
 BEGIN_MARK="# BEGIN kyverno-guard"
 END_MARK="# END kyverno-guard"
 
 if [ ! -f "$GATEWAY_CONFIG" ]; then
   echo "gateway config not found: ${GATEWAY_CONFIG}" >&2
+  exit 1
+fi
+
+echo "policy gate for ${POLICY#"${ROOT}/"}"
+if ! bash "${ROOT}/scripts/policy-gate.sh" "$POLICY"; then
+  echo "the Kyverno sandbox policy did not pass the policy gate; nothing was started" >&2
   exit 1
 fi
 
@@ -61,6 +70,45 @@ if [ "$deny_code" != "403" ] || [ "$(tr -d '\r\n' </tmp/kyverno-deny.body)" != "
 fi
 rm -f /tmp/kyverno-deny.hdr /tmp/kyverno-deny.body
 unset deny_body
+
+# kyverno-authz v0.4.0 loads a policy that fails to compile as nothing and
+# allows everything, silently. Prove the MCP policy is live before relying on it.
+mcp_probe_body='{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"delete_repo","arguments":{}}}'
+mcp_probe="$(printf 'POST /mcp HTTP/1.1\r\nHost: host.openshell.internal\r\nContent-Type: application/json\r\nContent-Length: %s\r\n\r\n%s' "${#mcp_probe_body}" "$mcp_probe_body" \
+  | curl -sS -m 5 -X POST "$AUTHZ_URL" --data-binary @- -w ' %{http_code}' || true)"
+if [ "$mcp_probe" != "mcp_tool_denied 403" ]; then
+  echo "kyverno-authz did not deny an off-allowlist MCP tool (got: ${mcp_probe}); is mcp-tool-guard.yaml loaded?" >&2
+  docker logs "$AUTHZ_NAME" >&2 || true
+  exit 1
+fi
+echo "kyverno-authz policies live: path rule and MCP tool rule both deny"
+
+if [ -f "$MCP_PID_FILE" ]; then
+  kill "$(cat "$MCP_PID_FILE" 2>/dev/null)" >/dev/null 2>&1 || true
+  rm -f "$MCP_PID_FILE"
+  sleep 1
+fi
+if nc -z 127.0.0.1 "$MCP_PORT" >/dev/null 2>&1; then
+  echo "port ${MCP_PORT} is already in use; stop that process (make kyverno-stop) and retry" >&2
+  exit 1
+fi
+echo "starting the fake MCP server on 127.0.0.1:${MCP_PORT}"
+: >"$MCP_LOG"
+MCP_PORT="$MCP_PORT" nohup python3 "${ROOT}/bonus/mcp-demo/server.py" >>"$MCP_LOG" 2>&1 &
+echo $! >"$MCP_PID_FILE"
+mcp_ready=0
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  if curl -fsS -m 2 -o /dev/null "http://127.0.0.1:${MCP_PORT}/healthz"; then
+    mcp_ready=1
+    break
+  fi
+  sleep 1
+done
+if [ "$mcp_ready" -ne 1 ]; then
+  echo "fake MCP server did not start" >&2
+  cat "$MCP_LOG" >&2 || true
+  exit 1
+fi
 
 if [ -f "$PID_FILE" ]; then
   old="$(cat "$PID_FILE" 2>/dev/null || true)"
@@ -147,22 +195,33 @@ openshell sandbox create \
 create_rc=$?
 set -e
 sleep 2
-printf '%s\n' "----- sandbox log -----"
-openshell logs "$SANDBOX_NAME" --since 10m --source sandbox 2>&1 | sed -E $'s/\033\\[[0-9;]*[[:alpha:]]//g' | grep -E 'engine:middleware|kyverno_path_denied|FINDING:CREATE' || true
+audit="$(openshell logs "$SANDBOX_NAME" --since 10m --source sandbox 2>&1 | sed -E $'s/\033\\[[0-9;]*[[:alpha:]]//g' || true)"
+printf '%s\n' "----- OpenShell audit log: middleware and L7 decisions -----"
+printf '%s\n' "$audit" | grep -E 'engine:middleware|host\.openshell\.internal:8766/admin' \
+  | sed -E 's/^\[[0-9.]+\] \[sandbox\] \[OCSF *\] \[ocsf\] //' || true
+printf '%s\n' "----- fake MCP server: what actually arrived -----"
+cat "$MCP_LOG"
+# The denied calls must never have reached the server.
+if grep -qE 'delete_repo|--output|\.\./' "$MCP_LOG"; then
+  mcp_check="MCP-SERVER-CHECK a denied call reached the server"
+else
+  mcp_check="MCP-SERVER-CHECK denied calls never arrived"
+fi
+printf '%s\n' "$mcp_check"
+corpus_file="${ROOT}/.out/kyverno-bonus.log"
+mkdir -p "${ROOT}/.out"
+{ printf '%s\n' "$audit"; cat "$probe_out"; cat "$MCP_LOG"; printf '%s\n' "$mcp_check"; } >"$corpus_file"
 allow_line="$(grep 'KYVERNO ALLOW_PATH ' "$probe_out" || true)"
-deny_line="$(grep 'KYVERNO DENY_PATH ' "$probe_out" || true)"
 rm -f "$probe_out"
 printf '%s\n' "allow: ${allow_line:-missing}"
-printf '%s\n' "deny: ${deny_line:-missing}"
 case "$allow_line" in
   *" 403"|*" 000"|"") echo "allow path was not forwarded" >&2; exit 1 ;;
-esac
-case "$deny_line" in
-  *" 403") ;;
-  *) echo "deny path was not blocked by Kyverno" >&2; exit 1 ;;
 esac
 if [ "$create_rc" -ne 0 ]; then
   echo "sandbox create exited ${create_rc}" >&2
   exit "$create_rc"
 fi
-echo "kyverno bonus wired"
+echo
+echo "grading the bonus with verify.sh against bonus/expected_bonus.tsv"
+EVENTS="${ROOT}/bonus/expected_bonus.tsv" POLICY="$POLICY" VERIFY_LOG_FILE="$corpus_file" \
+  bash "${ROOT}/verify.sh" --sandbox "$SANDBOX_NAME"

@@ -6,6 +6,9 @@ spec:
   failurePolicy: Fail
   evaluation:
     mode: HTTP
+  matchConditions:
+    - name: github-api-only
+      expression: object.attributes.host == "api.github.com"
   validations:
     - expression: >
         object.attributes.host == "api.github.com" && !(object.attributes.method in ["GET", "HEAD"] && object.attributes.path == "/repos/example-org/example-repo")

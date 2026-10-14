@@ -33,15 +33,31 @@ network_policies:
         access: read-only
     binaries:
       - path: /usr/bin/curl
+  mcp_demo:
+    name: fake-mcp-server
+    endpoints:
+      - host: host.openshell.internal
+        port: 8766
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: POST
+              path: /mcp
+    binaries:
+      - path: /usr/bin/curl
 
-# Runs only after OpenShell has already admitted the request. DELETE and POST
-# never reach this stage. The CEL rule then allows one fictional read path.
+# Runs only after OpenShell has already admitted the request, before provider
+# credentials. On api.github.com, DELETE and POST never reach this stage and
+# the CEL rule allows one fictional read path. On the fake MCP server, OpenShell
+# admits only POST /mcp and Kyverno decides which tool and which arguments.
 network_middlewares:
   kyverno_guard:
-    name: kyverno-path-guard
+    name: kyverno-guard-policies
     middleware: kyverno-guard
     order: 10
     on_error: fail_closed
     endpoints:
       include:
         - api.github.com
+        - host.openshell.internal

@@ -5,7 +5,8 @@
 # agent-policy.yaml, so an agent policy can grow, but never past these
 # invariants: Landlock as a hard requirement, uid/gid 1000, read-only REST,
 # curl as the only network binary, and a short host list with no
-# link-local or metadata address.
+# link-local or metadata address. The one local MCP server may only be
+# reached with POST /mcp; which tools it may be asked for is Kyverno's call.
 version: 1
 
 filesystem_policy:
@@ -49,5 +50,18 @@ network_policies:
         protocol: rest
         enforcement: enforce
         access: read-only
+    binaries:
+      - path: /usr/bin/curl
+  local_mcp_server:
+    name: local-mcp-server-post-only
+    endpoints:
+      - host: host.openshell.internal
+        port: 8766
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: POST
+              path: /mcp
     binaries:
       - path: /usr/bin/curl

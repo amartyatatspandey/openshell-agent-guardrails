@@ -4,3 +4,4 @@
 .out/
 bonus/kyverno-guard/kyverno-guard.pid
 bonus/kyverno-guard/bin/
+bonus/mcp-demo/server.pid

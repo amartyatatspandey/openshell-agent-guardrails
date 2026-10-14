@@ -16,7 +16,13 @@ if [ -f "$PID_FILE" ]; then
   fi
   rm -f "$PID_FILE"
 fi
+openshell sandbox delete "${KYVERNO_SANDBOX_NAME:-guardrails-kyverno}" >/dev/null 2>&1 || true
 docker rm -f "$AUTHZ_NAME" >/dev/null 2>&1 || true
+MCP_PID_FILE="${ROOT}/bonus/mcp-demo/server.pid"
+if [ -f "$MCP_PID_FILE" ]; then
+  kill "$(cat "$MCP_PID_FILE" 2>/dev/null)" >/dev/null 2>&1 || true
+  rm -f "$MCP_PID_FILE"
+fi
 
 if [ -f "$GATEWAY_CONFIG" ] && grep -q "$BEGIN_MARK" "$GATEWAY_CONFIG"; then
   staged="$(mktemp)"
