@@ -135,16 +135,17 @@
 <header>
   <div class="htitle">
     <div class="kicker"><span class="dot"></span>07 — Architecture deep dive · interactive</div>
-    <h1>Six zones. Every attempt, the control that stops it, and the log that proves it.</h1>
+    <h1>Proven before it runs. Denied while it runs. Logged as evidence.</h1>
   </div>
   <div class="toolbar">
     <button class="tbtn" id="btn-reset">Reset</button>
     <span class="sep"></span>
     <button class="tbtn" data-trace="verify">Trace: verify run</button>
+    <button class="tbtn" data-trace="developer">Developer plane</button>
     <button class="tbtn accent" data-trace="egress">Denied egress</button>
     <button class="tbtn accent" data-trace="kernel">Kernel denials</button>
     <button class="tbtn accent" data-trace="credential">Credential path</button>
-    <button class="tbtn" data-trace="kyverno">Kyverno bonus</button>
+    <button class="tbtn" data-trace="kyverno">Kyverno + MCP bonus</button>
     <span class="sep"></span>
     <button class="tbtn play" id="btn-play">▶ Play the run</button>
     <div class="zoomgroup">
@@ -189,12 +190,12 @@
     <button id="cap-next" aria-label="Next step">▶</button>
     <button id="cap-stop" aria-label="Stop">■</button>
   </div>
-  <div class="rail" id="rail"><span class="rl">10 controls · press 1–0</span></div>
+  <div class="rail" id="rail"><span class="rl">12 controls · keys 1–0, − = · ★ bonus</span></div>
 </main>
 
 <footer>
   <span>OPENSHELL AGENT GUARDRAILS — ARCHITECTURE DEEP DIVE · click any box · ✗ = where a request was stopped</span>
-  <span>PAGE 07 / 15</span>
+  <span>PAGE 07 / 20</span>
 </footer>
 
 <div class="backdrop" id="backdrop"></div>
@@ -223,17 +224,19 @@ const BANDS = [
 const GX = [60,248,436,624,812,1000], GW = 178;
 const NODES = [
   // Zone H
-  {id:'h-verify',   x:40,  y:34, w:320, h:112, z:'h', eyebrow:'Entrypoint', title:'make verify  /  make demo', sub:'preflight → create sandbox → run attempts → read log → grade'},
-  {id:'h-preflight',x:390, y:34, w:300, h:112, z:'h', eyebrow:'Read-only checks', title:'make preflight', sub:'Docker ≥ 28 · host networking · OpenShell 0.1.3 · gateway Connected'},
-  {id:'h-setup',    x:720, y:34, w:300, h:112, z:'h', eyebrow:'One-time', title:'make setup', sub:'build image · import GitHub profile · provider demo-github (FAKE token)'},
-  {id:'h-grader',   x:1050,y:34, w:340, h:112, z:'h', eyebrow:'The judge', title:'verify.sh + expected_events.tsv', sub:'10 rows · one regex each · 10 PASS / 0 FAIL → exit 0'},
-  {id:'h-kyverno',  x:1420,y:34, w:340, h:112, z:'h', eyebrow:'Bonus', title:'make kyverno  /  kyverno-stop', sub:'start guard + authz · register middleware · restore gateway.toml'},
+  {id:'h-verify',   x:40,  y:34, w:280, h:112, z:'h', eyebrow:'Entrypoint', title:'make verify  /  make demo', sub:'gate → create sandbox → run attempts → read log → grade 12 rows'},
+  {id:'h-setup',    x:340, y:34, w:250, h:112, z:'h', eyebrow:'One-time', title:'make setup', sub:'build image · GitHub profile · provider demo-github (FAKE token)'},
+  {id:'h-preflight',x:610, y:34, w:250, h:112, z:'h', eyebrow:'Read-only checks', title:'make preflight', sub:'Docker ≥ 28 · host networking · OpenShell 0.1.3 · prover · ssh-keygen'},
+  {id:'h-gate',     x:880, y:34, w:300, h:112, z:'h', eyebrow:'Developer plane', title:'Policy gate', sub:'openshell-prover: within_boundary? · reviewer + operator signatures'},
+  {id:'h-grader',   x:1200,y:34, w:270, h:112, z:'h', eyebrow:'The judge', title:'verify.sh + evidence', sub:'12 rows · exact line per row · signed, hash-chained bundle'},
+  {id:'h-kyverno',  x:1490,y:34, w:270, h:112, z:'h', eyebrow:'Bonus', title:'make kyverno / stop', sub:'guard + authz + fake MCP server · gateway.toml restored exactly'},
 
   // Zone C
-  {id:'c-gateway',  x:40,  y:195, w:400, h:128, z:'c', eyebrow:'Control plane', title:'OpenShell gateway', sub:'https://localhost:17670 · Homebrew service · creates sandboxes via Docker'},
-  {id:'c-policy',   x:470, y:195, w:360, h:128, z:'c', eyebrow:'Policy', title:'agent-policy.yaml', sub:'Landlock hard_requirement · uid 1000 · 2 read-only hosts, curl only', code:true},
-  {id:'c-provider', x:860, y:195, w:360, h:128, z:'c', eyebrow:'Credentials', title:'Provider store: demo-github', sub:'keeps the value · the sandbox gets a placeholder'},
-  {id:'c-audit',    x:1290,y:195, w:470, h:128, z:'c', eyebrow:'Evidence', title:'OCSF audit log', sub:'openshell logs <name> --source sandbox · NET: · HTTP: · FINDING:'},
+  {id:'c-gateway',  x:40,  y:195, w:330, h:128, z:'c', eyebrow:'Control plane', title:'OpenShell gateway', sub:'https://localhost:17670 · creates sandboxes · rule proposals'},
+  {id:'c-provider', x:400, y:195, w:300, h:128, z:'c', eyebrow:'Credentials', title:'Provider: demo-github', sub:'keeps the value · the sandbox gets a placeholder'},
+  {id:'c-policy',   x:730, y:195, w:280, h:128, z:'c', eyebrow:'Policy · signed', title:'agent-policy.yaml', sub:'Landlock hard · uid 1000 · 2 read-only hosts, curl only', code:true},
+  {id:'c-boundary', x:1040,y:195, w:250, h:128, z:'c', eyebrow:'Operator ceiling · signed', title:'org-boundary.yaml', sub:'what any agent policy may ever allow', code:true},
+  {id:'c-audit',    x:1320,y:195, w:440, h:128, z:'c', eyebrow:'Evidence', title:'OCSF audit log', sub:'openshell logs <name> --source sandbox · NET: · HTTP: · FINDING:'},
 
   // Zone X
   {id:'x-agent',    x:40,  y:378, w:400, h:160, z:'x', eyebrow:'Untrusted', title:'Agent process · run_all.sh', sub:'uid 1000 · curl, python3, dig · one labelled attempt per control, fake data only'},
@@ -248,13 +251,13 @@ const NODES = [
   {id:'g-l4',    x:GX[0], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'L4 default-deny', sub:'host:port + binary must match a policy, or DENIED'},
   {id:'g-dns',   x:GX[1], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'Policy DNS', sub:'names not eligible under policy → NET:REFUSE'},
   {id:'g-binary',x:GX[2], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'Binary identity', sub:'github_readonly lists /usr/bin/curl only'},
-  {id:'g-l7',    x:GX[3], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'L7 read-only', sub:'access: read-only → GET / HEAD pass, DELETE / POST denied'},
+  {id:'g-l7',    x:GX[3], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'L7 rules', sub:'read-only → GET / HEAD · MCP host: only POST /mcp'},
   {id:'g-cred',  x:GX[4], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Gate', title:'Credential binding', sub:'placeholder resolves only on the bound host / port / path'},
   {id:'g-mw',    x:GX[5], y:650, w:GW, h:150, z:'s', gate:true, eyebrow:'Hook', title:'Middleware', sub:'EvaluateHttpRequest · PRE_CREDENTIALS · fail-closed'},
 
   // Zone K (inside S band, right side)
-  {id:'k-guard', x:1250, y:612, w:510, h:96,  z:'k', eyebrow:'Bonus · my Go service', title:'kyverno-guard', sub:'gRPC :50061 · protocol 1.0 · rebuilds the request as raw HTTP/1.1'},
-  {id:'k-authz', x:1250, y:738, w:510, h:104, z:'k', eyebrow:'Bonus · Kyverno', title:'kyverno-authz v0.4.0', sub:'HTTP :9081 · --nested-request · CEL ValidatingPolicy github-read-path'},
+  {id:'k-guard', x:1250, y:612, w:510, h:96,  z:'k', eyebrow:'Bonus · my Go service', title:'kyverno-guard', sub:'gRPC :50061 · protocol 1.0 · forwards the request (and body) as raw HTTP/1.1'},
+  {id:'k-authz', x:1250, y:738, w:510, h:104, z:'k', eyebrow:'Bonus · Kyverno', title:'kyverno-authz v0.4.0 · 2 CEL policies', sub:'github-read-path · mcp-tool-guard (tool allowlist, flag args, path traversal)'},
 
   // Zone E
   {id:'e-example', x:40,  y:900, w:200, h:135, z:'e', title:'example.com:443', sub:'no policy names it', code:true, blocked:true},
@@ -262,22 +265,23 @@ const NODES = [
   {id:'e-invalid', x:490, y:900, w:200, h:135, z:'e', title:'not-eligible.invalid', sub:'reserved DNS name', code:true, blocked:true},
   {id:'e-github',  x:720, y:900, w:480, h:135, z:'e', title:'api.github.com:443', sub:'reads allowed (curl) · writes, python3, unbound credentials denied · bonus: one path only', code:true},
   {id:'e-httpbin', x:1230,y:900, w:260, h:135, z:'e', title:'httpbin.org:443', sub:'read-only allowed · NOT bound to the credential', code:true},
-  {id:'e-tag',     x:1520,y:900, w:240, h:135, z:'e', tag:true, title:'RULE: DENIED TRAFFIC NEVER LEAVES', sub:'Each ✗ marks where a request was stopped, before it reached the destination.'},
+  {id:'e-mcp',     x:1520,y:900, w:240, h:135, z:'e', title:'fake MCP server', sub:'127.0.0.1:8766, seen as host.openshell.internal · canned results', code:true},
 ];
 
 /* ---------- arrows ---------- */
 const ARROWS = [
   // H <-> C
-  {id:'a-create', pts:[[200,146],[200,195]], style:'strong', label:'sandbox create --policy --provider', lp:[208,150]},
-  {id:'a-pre',    pts:[[540,146],[540,176],[400,176],[400,195]], style:'muted', label:'status: Connected?', lp:[548,152]},
-  {id:'a-setup',  pts:[[870,146],[870,176],[1040,176],[1040,195]], style:'muted', label:'provider create (FAKE token)', lp:[878,152]},
-  {id:'a-logs',   pts:[[1525,195],[1525,176],[1220,176],[1220,146]], style:'muted-dash', label:'openshell logs --source sandbox', lp:[1300,152]},
+  {id:'a-create', pts:[[180,146],[180,195]], style:'strong', label:'sandbox create', lp:[188,152]},
+  {id:'a-setup',  pts:[[465,146],[465,195]], style:'muted', label:'provider create', lp:[473,152]},
+  {id:'a-gate-p', pts:[[930,146],[930,195]], style:'gate', label:'signature?', lp:[860,152]},
+  {id:'a-gate-b', pts:[[1110,146],[1110,195]], style:'gate', label:'within_boundary?', lp:[1118,152]},
+  {id:'a-logs',   pts:[[1400,195],[1400,146]], style:'muted-dash', label:'openshell logs', lp:[1408,152]},
   {id:'a-kyv',    pts:[[1760,95],[1786,95],[1786,660],[1760,660]], style:'dotted', label:'starts guard + authz', lp:[1640,544]},
 
   // C -> X
   {id:'a-spawn',  pts:[[240,323],[240,378]], style:'strong', label:'creates the sandbox', lp:[248,327]},
-  {id:'a-apply',  pts:[[635,323],[635,378]], style:'strong', label:'Landlock + uid 1000 at start', lp:[643,327]},
-  {id:'a-place',  pts:[[1000,323],[1000,360],[815,360],[815,501],[830,501]], style:'muted-dash', label:'placeholder only', lp:[1008,327]},
+  {id:'a-apply',  pts:[[770,323],[770,378]], style:'strong', label:'Landlock + uid 1000 at start', lp:[566,358]},
+  {id:'a-place',  pts:[[650,323],[650,360],[815,360],[815,501],[830,501]], style:'muted-dash', label:'placeholder only', lp:[520,327]},
   {id:'a-probe',  pts:[[40,470],[16,470],[16,90],[40,90]], style:'muted-dash', label:'PROBE … BLOCKED', lp:[20,150]},
 
   // inside X
@@ -288,7 +292,7 @@ const ARROWS = [
   // X -> S
   {id:'a-trunk',    pts:[[200,538],[200,590]], style:'strong', label:'all traffic → proxy', lp:[62,543]},
   {id:'a-envcarry', pts:[[1000,538],[1000,576],[901,576],[901,650]], style:'muted-dash', label:'placeholder rides along', lp:[1008,568]},
-  {id:'a-evidence', pts:[[1190,615],[1205,615],[1205,352],[1525,352],[1525,323]], style:'muted-dash', label:'every decision → OCSF event', lp:[1240,327]},
+  {id:'a-evidence', pts:[[1190,615],[1205,615],[1205,352],[1525,352],[1525,323]], style:'muted-dash', label:'every decision → OCSF event', lp:[1240,330]},
 
   // S -> E (denied)
   {id:'a-deny-example', pts:[[110,800],[110,892]], style:'danger', deny:true, label:'DENIED', lp:[118,850]},
@@ -299,10 +303,12 @@ const ARROWS = [
   {id:'a-allow-get',    pts:[[760,800],[975,900]], style:'allow', label:'GET ✓', lp:[880,846]},
   {id:'a-allow-cred',   pts:[[870,800],[1100,900]], style:'allow', label:'secret injected here only', lp:[1000,826]},
   {id:'a-deny-cred',    pts:[[960,800],[1340,892]], style:'danger', deny:true, label:'credential_endpoint_mismatch', lp:[1150,872]},
+  {id:'a-mcp-deny',     pts:[[1100,800],[1505,892]], style:'danger', deny:true, label:'delete_repo · --flag · ../ ✗', lp:[1215,814]},
+  {id:'a-mcp-allow',    pts:[[1160,800],[1640,900]], style:'allow', label:'search_issues ✓', lp:[1420,848]},
 
   // S <-> K
   {id:'a-mw-out', pts:[[1178,700],[1250,664]], style:'dotted', label:'gRPC', lp:[1196,700]},
-  {id:'a-k1',     pts:[[1505,708],[1505,738]], style:'dotted', label:'raw HTTP/1.1 POST', lp:[1513,713]},
+  {id:'a-k1',     pts:[[1505,708],[1505,738]], style:'dotted', label:'raw HTTP/1.1 + body', lp:[1513,713]},
   {id:'a-k2',     pts:[[1250,800],[1178,780]], style:'dotted-danger', label:'403 → DENY', lp:[1190,808]},
 ];
 
@@ -314,6 +320,7 @@ const STYLES = {
   'muted-dash':{stroke:'#8a8a8a', width:1.7, dash:'6 5', cls:''},
   dotted:{stroke:'#4a5f8c', width:2.1, dash:'2 6', cls:'strong'},
   'dotted-danger':{stroke:'#D9381E', width:2.1, dash:'2 6', cls:'danger'},
+  gate:{stroke:'#3f7a52', width:2.2, dash:'none', cls:'allow'},
 };
 // one arrowhead per style, so the head matches the line colour
 const defs = document.querySelector('svg defs');
@@ -395,11 +402,12 @@ function clearUI(){
 }
 
 const TRACES = {
-  verify:['h-verify','h-preflight','a-pre','a-create','c-gateway','a-spawn','c-policy','a-apply','x-agent','a-trunk','s-proxy','a-evidence','c-audit','a-logs','h-grader','a-probe'],
+  verify:['h-verify','h-gate','a-gate-p','a-gate-b','c-policy','c-boundary','a-create','c-gateway','a-spawn','a-apply','x-agent','a-trunk','s-proxy','a-evidence','c-audit','a-logs','h-grader','a-probe'],
+  developer:['h-gate','a-gate-p','a-gate-b','c-policy','c-boundary','h-verify','a-create','c-gateway'],
   egress:['x-agent','a-trunk','s-proxy','g-l4','g-dns','g-binary','g-l7','a-deny-example','a-deny-meta','a-deny-dns','a-deny-python','a-deny-write','a-allow-get','e-example','e-meta','e-invalid','e-github','a-evidence','c-audit'],
   kernel:['c-policy','a-apply','x-agent','a-read','x-landlock','a-lldeny','x-secret','a-setuid','x-kernel','a-probe','h-verify'],
   credential:['h-setup','a-setup','c-provider','a-place','x-env','x-agent','a-trunk','s-proxy','a-envcarry','g-cred','a-allow-cred','e-github','a-deny-cred','e-httpbin','a-evidence','c-audit'],
-  kyverno:['h-kyverno','a-kyv','x-agent','a-trunk','s-proxy','g-l7','a-allow-get','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','e-github','a-evidence','c-audit'],
+  kyverno:['h-kyverno','a-kyv','x-agent','a-trunk','s-proxy','g-l7','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','a-mcp-allow','e-mcp','e-github','a-allow-get','a-evidence','c-audit'],
 };
 let activeTrace = null;
 document.querySelectorAll('[data-trace]').forEach(btn=>{
@@ -466,13 +474,44 @@ const CONTROLS = [
    attempt:'<code>python3 -c "import os; os.setuid(0)"</code>: try to become root.',
    log:'PermissionError: [Errno 1] Operation not permitted\nPROBE priv-nonroot-denied <span class="d">BLOCKED</span>',
    pattern:'PROBE priv-nonroot-denied BLOCKED   (kind = exit-code)', kernel:true},
+  {id:'policy-within-boundary', short:'boundary proof', plane:'Developer', domain:'compliance', incident:'Policy widened past what the operator allows',
+   lit:['h-gate','a-gate-b','c-boundary','c-policy','a-gate-p','h-verify'],
+   attempt:'Not an agent action: a policy edit, checked before any sandbox exists. <code>make policy-tamper</code> tries eight edits; for example, adding <code>example.com</code> to the policy.',
+   log:'POLICY-GATE boundary-signature valid policies/boundary/org-boundary.yaml\nPOLICY-GATE boundary within_boundary domains=filesystem,network_l4,network_rest,process,landlock\n\n# the same gate on the edited copy:\nPOLICY-GATE boundary <span class="d">exceeds_boundary</span>\nPOLICY-GATE counterexample {"domain":"network","host":"example.com","port":443,"method":"GET","path":"/",…}',
+   pattern:'^POLICY-GATE boundary within_boundary   (kind = gate)', gate:true},
+  {id:'policy-signature-valid', short:'review signature', plane:'Developer', domain:'compliance', incident:'Unreviewed policy change',
+   lit:['h-gate','a-gate-p','c-policy','h-verify'],
+   attempt:'A change that stays inside the boundary but nobody reviewed, such as adding <code>raw.githubusercontent.com</code>. The proof passes; the signature does not.',
+   log:'POLICY-GATE signature valid signer=openshell-policy-review\n\n# the in-boundary edit:\nPOLICY-GATE boundary within_boundary\nPOLICY-GATE signature <span class="d">invalid</span> (policy bytes differ from what was reviewed, or wrong signer)\nPOLICY-GATE <span class="d">refuse</span> .out/tamper/in-boundary.yaml',
+   pattern:'^POLICY-GATE signature valid   (kind = gate)', gate:true},
+  {id:'mcp-tool-denied', short:'MCP tool', plane:'MCP', domain:'security', incident:'Agent calls a dangerous tool the server advertises', bonus:true,
+   lit:['x-agent','a-trunk','s-proxy','g-l7','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','e-mcp'],
+   attempt:'<code>tools/call delete_repo</code> on the fake MCP server. The server lists it in <code>tools/list</code>; the allowlist is only <code>search_issues</code> and <code>read_file</code>.',
+   log:'HTTP:POST [MED] <span class="d">DENIED</span> POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_tool_denied]',
+   pattern:'middleware_denied:kyverno_guard:mcp_tool_denied   (bonus/expected_bonus.tsv)'},
+  {id:'mcp-arg-flag-denied', short:'MCP flag arg', plane:'MCP', domain:'security', incident:'Argument injection into an allowed tool', bonus:true,
+   lit:['x-agent','a-trunk','s-proxy','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','e-mcp'],
+   attempt:'<code>search_issues</code> (allowed) with <code>{"query":"--output=/tmp/dump"}</code>, an argument shaped like a command-line flag.',
+   log:'HTTP:POST [MED] <span class="d">DENIED</span> POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_arg_flag_injection]',
+   pattern:'middleware_denied:kyverno_guard:mcp_arg_flag_injection'},
+  {id:'mcp-arg-traversal-denied', short:'MCP traversal', plane:'MCP', domain:'security', incident:'Path traversal through a file tool', bonus:true,
+   lit:['x-agent','a-trunk','s-proxy','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','e-mcp'],
+   attempt:'<code>read_file</code> (allowed) with <code>{"path":"../../opt/company/prod.env"}</code>.',
+   log:'HTTP:POST [MED] <span class="d">DENIED</span> POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:false transformed:false reason:middleware_denied:kyverno_guard:mcp_arg_path_traversal]',
+   pattern:'middleware_denied:kyverno_guard:mcp_arg_path_traversal'},
+  {id:'mcp-malformed-fail-closed', short:'MCP fail-closed', plane:'MCP', domain:'security', incident:'Policy engine cannot decide', bonus:true,
+   lit:['x-agent','a-trunk','s-proxy','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','e-mcp'],
+   attempt:'A body that is not JSON. Kyverno cannot evaluate it, the guard reports an error, and <code>on_error: fail_closed</code> decides.',
+   log:'HTTP:POST [MED] <span class="d">DENIED</span> POST http://host.openshell.internal:8766/mcp [policy:mcp_demo engine:middleware] [failed:true transformed:false reason:middleware_failed: external_service_error]',
+   pattern:'DENIED POST …8766/mcp .*failed:true.*reason:middleware_failed'}
 ];
 
 const rail = $('rail');
 CONTROLS.forEach((c,i)=>{
   const b = document.createElement('button');
   b.className = 'chip'; b.dataset.ctl = c.id;
-  b.innerHTML = `<span class="k">${(i+1)%10}</span>${c.short}<span class="pl">${c.plane}</span>`;
+  const key = i < 10 ? String((i+1)%10) : (i === 10 ? '−' : i === 11 ? '=' : '★');
+  b.innerHTML = `<span class="k">${key}</span>${c.short}<span class="pl">${c.plane === 'Developer' ? 'DEV' : c.plane}</span>`;
   b.addEventListener('click', ()=>selectControl(i));
   rail.appendChild(b);
 });
@@ -485,13 +524,17 @@ function selectControl(i){
   if(was){ light([]); closeDrawer(); return; }
   chip.classList.add('active');
   light(c.lit);
-  openStatic(`Control ${i+1} / 10 · ${c.plane} plane · ${c.domain}`, c.id, `
+  openStatic(c.bonus ? `Bonus · ${c.plane} plane · ${c.domain}` : `Control ${i+1} / 12 · ${c.plane} plane · ${c.domain}`, c.id, `
     <p><b>Incident class:</b> ${c.incident}</p>
-    <h3>What the agent attempts</h3><p>${c.attempt}</p>
-    <h3>${c.kernel ? 'Evidence (kernel-only: printed by the probe on an observed error)' : 'What OpenShell wrote (real output)'}</h3>${LOG(c.log)}
+    <h3>${c.gate ? 'What is being checked' : 'What the agent attempts'}</h3><p>${c.attempt}</p>
+    <h3>${c.kernel ? 'Evidence (kernel-only: printed by the probe on an observed error)' : c.gate ? 'What the policy gate printed (real output)' : 'What OpenShell wrote (real output)'}</h3>${LOG(c.log)}
     <h3>What verify.sh matches</h3><p><code>${esc(c.pattern)}</code></p>
     ${c.kernel
       ? '<div class="callout">Landlock and process-identity denials are not pushed to the gateway log stream. This row passes only if the probe saw the real permission error; success or silence prints NOT-BLOCKED and the row fails.</div>'
+      : c.gate
+      ? '<div class="callout ok">If the gate refuses, verify.sh creates no sandbox at all and every row fails.</div>'
+      : c.bonus
+      ? '<div class="callout ok">Graded by make kyverno with the same verify.sh, from OpenShell\'s own log. The fake MCP server\'s log shows the call never arrived.</div>'
       : '<div class="callout ok">Graded from OpenShell\'s own audit log, not from the probe\'s output. If this line is missing, the row fails and make verify exits 1.</div>'}
   `);
 }
@@ -502,13 +545,13 @@ const DETAILS = {
     <p>The one command the reviewer runs. <code>make demo</code> is the same with <code>DEMO=1</code>, which also prints the agent's attempts and the raw denials.</p>
     <h3>What verify.sh does</h3>
     <ul>
-      <li>Runs preflight first (Makefile dependency).</li>
+      <li>Runs preflight first (Makefile dependency), then the <b>policy gate</b>. If the gate refuses, no sandbox is created.</li>
       <li>Deletes any previous <code>guardrails-demo</code> sandbox, so every run is clean.</li>
       <li>Base64-encodes <code>scenarios/run_all.sh</code> and runs it inside a new sandbox: <code>openshell sandbox create --from openshell-guardrails-agent:dev --policy … --provider demo-github --no-tty</code>.</li>
       <li>Waits 2 s, then reads <code>openshell logs &lt;name&gt; --since 10m --source sandbox</code> and strips ANSI codes.</li>
       <li>Grades each row in <code>expected_events.tsv</code> and prints the matrix.</li>
     </ul>
-    <table><tr><th>exit 0</th><td>all 10 rows matched</td></tr><tr><th>exit 1</th><td>any row failed</td></tr><tr><th>exit 2</th><td>setup or probe error</td></tr></table>`},
+    <table><tr><th>exit 0</th><td>all 12 rows matched</td></tr><tr><th>exit 1</th><td>any row failed</td></tr><tr><th>exit 2</th><td>setup or probe error</td></tr></table>`},
   'h-preflight':{eyebrow:'Zone H · read-only', title:'make preflight', body:`
     <p>Checks the machine before anything is created, and <b>never changes a setting</b>.</p>
     <ul>
@@ -529,22 +572,26 @@ const DETAILS = {
     <p>Each row: <code>id · control · plane · domain · kind · pattern</code>.</p>
     <ul>
       <li><b>kind = log</b> (8 rows): an extended regex has to match OpenShell's audit log.</li>
+      <li><b>kind = gate</b> (2 rows): the policy gate's <code>POLICY-GATE</code> lines.</li>
       <li><b>kind = exit-code</b> (2 rows): the probe has to print <code>PROBE &lt;id&gt; BLOCKED</code>, which it does only on an observed permission error.</li>
     </ul>
     <p>Every pattern was validated against real captured lines. <code>tests/fixtures/observed-live.log</code> is real output. <code>observed-live-missing-egress.log</code> removes one line and makes the grader exit 1, which proves it can fail.</p>
-    <p>Offline grading: <code>VERIFY_LOG_FILE=tests/fixtures/observed-live.log ./verify.sh --sandbox demo</code>.</p>`},
+    <p>Offline grading: <code>VERIFY_LOG_FILE=tests/fixtures/observed-live.log ./verify.sh --sandbox demo</code>.</p>
+    <h3>Evidence</h3>
+    <p><code>make evidence</code> writes <code>.out/evidence/evidence-&lt;UTC&gt;.json</code>: versions, image ID, file hashes, the gate output and prover JSON, and each row with the exact line that proved it. Rows are hash-chained and the bundle is signed; <code>make evidence-verify</code> checks both and reports drift.</p>`},
   'h-kyverno':{eyebrow:'Zone H · bonus', title:'make kyverno / make kyverno-stop', body:`
     <ul>
       <li>Builds <code>kyverno-guard</code> (Go) and starts it with nohup, so it outlives the shell.</li>
       <li>Starts <code>kyverno-authz</code> v0.4.0 in HTTP mode with <code>--nested-request</code>, the file policy source, and kube policies off.</li>
       <li>Registers the middleware in <code>gateway.toml</code> between <code># BEGIN/END kyverno-guard</code> markers, then restarts the gateway.</li>
-      <li>Creates a sandbox with <code>agent-policy-kyverno.yaml</code> and checks one allowed path and one denied path.</li>
+      <li>Starts the fake MCP server on 127.0.0.1:8766, and first proves both CEL rules deny (a rule that fails to compile would silently allow everything).</li>
+      <li>Runs the policy gate on <code>agent-policy-kyverno.yaml</code>, creates the sandbox, runs the probes, and grades ten rows with <code>verify.sh</code> against <code>bonus/expected_bonus.tsv</code>.</li>
     </ul>
     <div class="callout">kyverno-stop removes the registration, stops both processes and restores gateway.toml <b>byte-identical</b>. While it's registered, the gateway refuses to start if the guard is down, so the lifecycle matters.</div>
     <p>macOS + Homebrew OpenShell + Go 1.24 only. Not graded by make verify.</p>`},
   'c-gateway':{eyebrow:'Zone C · control plane', title:'OpenShell gateway', body:`
     <p>OpenShell's control plane, running as a Homebrew service at <code>https://localhost:17670</code>.</p>
-    <ul><li>Stores sandbox policy and provider credentials.</li><li>Creates sandboxes through the compute driver (here Docker Desktop).</li><li>Collects the supervisor's OCSF events, which <code>openshell logs</code> reads.</li></ul>
+    <ul><li>Stores sandbox policy and provider credentials.</li><li>Creates sandboxes through the compute driver (here Docker Desktop).</li><li>Collects the supervisor's OCSF events, which <code>openshell logs</code> reads.</li><li>Turns denials into pending rule proposals (<code>openshell rule get &lt;sandbox&gt; --status pending</code>). The approval gate proves each against the boundary before a person may approve it.</li></ul>
     <p>Pinned to <b>v0.1.3</b>. OpenShell is alpha, so the demo targets one exact release.</p>`},
   'c-policy':{eyebrow:'Zone C · policy', title:'policies/openshell/agent-policy.yaml', body:`
     <pre>filesystem_policy:
@@ -609,10 +656,10 @@ STRIPE_KEY=sk_live_FAKE_PLACEHOLDER_ONLY</pre>
     <p>Stops <code>example.com:443</code> and the metadata address <code>169.254.169.254:80</code>. That's the address behind cloud-credential theft incidents.</p>`},
   'g-dns':{eyebrow:'Gate', title:'Policy DNS', body:`<p>Names that aren't eligible under policy get a refused answer: <code>NET:REFUSE … policy_dns_ineligible</code>. DNS itself can't be used as a side channel to an arbitrary name.</p>`},
   'g-binary':{eyebrow:'Gate', title:'Binary identity', body:`<p><code>github_readonly</code> lists <code>/usr/bin/curl</code>. When <code>/usr/bin/python3.12</code> opens the same allowed host, it's denied.</p><div class="callout">Policy is about <b>which process</b> acts, not only where it goes.</div>`},
-  'g-l7':{eyebrow:'Gate', title:'L7 read-only', body:`<p><code>protocol: rest</code>, <code>enforcement: enforce</code>, <code>access: read-only</code>. OpenShell parses the HTTP request: GET and HEAD pass, DELETE and POST are denied with <code>engine:l7</code>.</p><p>Read-only means the method is denied, not just the host.</p>`},
+  'g-l7':{eyebrow:'Gate', title:'L7 rules', body:`<p><code>protocol: rest</code>, <code>enforcement: enforce</code>, <code>access: read-only</code>. OpenShell parses the HTTP request: GET and HEAD pass, DELETE and POST are denied with <code>engine:l7</code>. Read-only means the method is denied, not just the host.</p><p>Bonus policy: on the MCP host, explicit <code>rules</code> allow only <code>POST /mcp</code>. <code>POST /admin</code> is an L7 denial before Kyverno is asked.</p>`},
   'g-cred':{eyebrow:'Gate', title:'Credential binding', body:`<p>Resolves the placeholder only for the host/port/path the provider profile binds. If the agent spends it anywhere else, even a host the network allows, OpenShell writes:</p><pre>HTTP:GET [HIGH] <span class="d">DENIED</span> … engine:credential-binding [reason:credential_endpoint_mismatch]
 FINDING:<span class="d">BLOCKED</span> [HIGH] "Provider credential used at an unauthorized endpoint"</pre>`},
-  'g-mw':{eyebrow:'Hook', title:'Supervisor middleware', body:`<p>OpenShell's gRPC extension point: <code>SupervisorMiddleware.EvaluateHttpRequest</code>, bound at phase <b>PRE_CREDENTIALS</b>, so it runs after L7 has allowed the request and before any secret is injected.</p><p>Attached per policy under <code>network_middlewares</code> with <code>on_error: fail_closed</code>. If the middleware errors, the request is denied.</p><p>Only active in the bonus policy <code>agent-policy-kyverno.yaml</code>, for <code>api.github.com</code>.</p>`},
+  'g-mw':{eyebrow:'Hook', title:'Supervisor middleware', body:`<p>OpenShell's gRPC extension point: <code>SupervisorMiddleware.EvaluateHttpRequest</code>, bound at phase <b>PRE_CREDENTIALS</b>, so it runs after L7 has allowed the request and before any secret is injected.</p><p>Attached per policy under <code>network_middlewares</code> with <code>on_error: fail_closed</code>. If the middleware errors, the request is denied.</p><p>Only active in the bonus policy <code>agent-policy-kyverno.yaml</code>, for <code>api.github.com</code> and the MCP host. A Kyverno evaluation error comes back as <code>failed:true … middleware_failed</code> and the request is denied.</p>`},
   'k-guard':{eyebrow:'Zone K · bonus', title:'kyverno-guard (bonus/kyverno-guard/main.go)', body:`
     <p>A small Go gRPC server I wrote against OpenShell v0.1.3's protobufs.</p>
     <ul>
@@ -622,25 +669,69 @@ FINDING:<span class="d">BLOCKED</span> [HIGH] "Provider credential used at an un
     </ul>
     <pre>ALLOW sandbox=guardrails-kyverno GET api.github.com/repos/example-org/example-repo
 DENY  sandbox=guardrails-kyverno GET api.github.com/repos/example-org/example-repo/contents/.env reason=kyverno_path_denied</pre>`},
-  'k-authz':{eyebrow:'Zone K · bonus', title:'kyverno-authz v0.4.0 + CEL policy', body:`
-    <pre>apiVersion: policies.kyverno.io/v1alpha1
-kind: ValidatingPolicy
-spec:
-  evaluation: { mode: HTTP }
-  validations:
-  - expression: >
-      object.attributes.host == "api.github.com" &&
-      !(object.attributes.method in ["GET","HEAD"] &&
-        object.attributes.path == "/repos/example-org/example-repo")
-        ? http.Denied("kyverno_path_denied").Response()
-        : http.Allowed().Response()</pre>
-    <div class="callout hot">v0.4.0 needs <b>v1alpha1</b>. With <code>v1</code> (what the current docs show) it loads no policy, silently. Also needs <code>--nested-request</code> so the CEL sees the agent's path, not the guard's POST.</div>
-    <p>Result in OpenShell's own log: <code>HTTP:GET [MED] DENIED … [engine:middleware] [reason:middleware_denied:kyverno_guard:kyverno_path_denied]</code>.</p>`},
+  'k-authz':{eyebrow:'Zone K · bonus', title:'kyverno-authz v0.4.0 + two CEL policies', body:`
+    <p><b>github-read-path.yaml</b>: on <code>api.github.com</code>, only GET/HEAD of <code>/repos/example-org/example-repo</code>; anything else → <code>kyverno_path_denied</code>.</p>
+    <p><b>mcp-tool-guard.yaml</b>: on <code>POST /mcp</code>, parse the JSON-RPC body and decide per tool and argument:</p>
+    <pre>matchConditions: host startsWith "host.openshell.internal" && POST /mcp
+variables:
+  rpc:  json.Unmarshal(string(object.attributes.body))
+  tool: rpc.params.name     args: rpc.params.arguments
+validation:
+  tool not in [search_issues, read_file]   → <span class="d">mcp_tool_denied</span>
+  any string arg startsWith("-")            → <span class="d">mcp_arg_flag_injection</span>
+  "path" arg contains ".." or startsWith "/" → <span class="d">mcp_arg_path_traversal</span>
+  otherwise                                 → allowed</pre>
+    <h3>Found by testing v0.4.0</h3>
+    <ul>
+      <li>A policy that returns <code>http.Allowed()</code> decides the request: the GitHub rule's allow was overriding the MCP rule's deny. Each policy now has <code>matchConditions</code> for its own traffic.</li>
+      <li>A policy that fails to compile loads as nothing and allows everything, silently. Examples are <code>apiVersion: …/v1</code> (the current docs) instead of <code>v1alpha1</code>, and <code>mcp.Parse</code>, which v0.4.0 does not have. <code>make kyverno</code> proves both rules deny before wiring the gateway.</li>
+      <li><code>--nested-request</code> is needed so CEL sees the agent's request, not the guard's POST.</li>
+    </ul>`},
   'e-github':{eyebrow:'Zone E', title:'api.github.com:443', body:`<p>The only host the agent may use with its credential, and only for reads with curl.</p><table><tr><th>GET via curl</th><td>allowed (credential resolved here)</td></tr><tr><th>DELETE / POST</th><td>denied by L7</td></tr><tr><th>python3</th><td>denied by binary identity</td></tr><tr><th>Bonus: other paths</th><td>denied by Kyverno</td></tr></table><p>All paths use the fictional <code>example-org/example-repo</code>.</p>`},
   'e-httpbin':{eyebrow:'Zone E', title:'httpbin.org:443', body:`<p>Allowed read-only by <code>public_echo</code>, but <b>not</b> bound to the GitHub credential. That makes it the clean test of credential binding: the network says yes, the credential still says no.</p>`},
   'e-example':{eyebrow:'Zone E · denied', title:'example.com:443', body:`<p>An IANA-reserved example domain. No policy names it, so default-deny egress stops it at the proxy. It never leaves the box.</p>`},
   'e-meta':{eyebrow:'Zone E · denied', title:'169.254.169.254:80', body:`<p>The link-local cloud-metadata address. On a cloud VM it hands out instance credentials. Default-deny stops it like any unlisted host.</p>`},
   'e-invalid':{eyebrow:'Zone E · refused', title:'not-eligible.invalid', body:`<p><code>.invalid</code> is reserved by RFC 2606 and can never resolve publicly. Policy DNS refuses it, and the log records <code>NET:REFUSE</code>.</p>`},
+  'h-gate':{eyebrow:'Zone H · Developer plane', title:'Policy gate (scripts/policy-gate.sh)', body:`
+    <p>Runs before every sandbox, in every <code>verify.sh</code> mode. Three checks, all required:</p>
+    <ul>
+      <li><b>Operator boundary is genuine:</b> <code>ssh-keygen -Y verify -n openshell-boundary</code> on <code>org-boundary.yaml</code>. Otherwise a widened boundary would make the proof meaningless.</li>
+      <li><b>Containment proof:</b> <code>openshell-prover check --boundary org-boundary.yaml agent-policy.yaml</code> must say <code>within_boundary</code>. <code>exceeds_boundary</code> comes with a counterexample; <code>unsupported</code> is also a refusal.</li>
+      <li><b>Reviewed text:</b> the policy matches its <code>.sig</code> (namespace <code>openshell-policy</code>).</li>
+    </ul>
+    <pre>POLICY-GATE boundary-signature valid policies/boundary/org-boundary.yaml
+POLICY-GATE boundary within_boundary domains=filesystem,network_l4,network_rest,process,landlock
+POLICY-GATE signature valid signer=openshell-policy-review
+POLICY-GATE accept policies/openshell/agent-policy.yaml</pre>
+    <h3>make policy-tamper: eight edits, eight refusals</h3>
+    <table>
+      <tr><th>new host</th><td>exceeds · GET example.com:443/</td></tr>
+      <tr><th>read-write</th><td>exceeds · a write method on httpbin.org</td></tr>
+      <tr><th>root</th><td>exceeds · run_as_user 1000 → 0</td></tr>
+      <tr><th>Landlock soft</th><td>exceeds · hard_requirement → best_effort</td></tr>
+      <tr><th>other binary</th><td>exceeds · GET api.github.com via python3.12</td></tr>
+      <tr><th>write /opt</th><td>unsupported → refused (fail closed)</td></tr>
+      <tr><th>inside boundary</th><td>proof passes · signature invalid</td></tr>
+      <tr><th>both widened</th><td>boundary untrusted</td></tr>
+    </table>
+    <p>The same proof gates approvals: <code>make approval-demo</code> rejects OpenShell's own rule proposals when they fall outside the boundary.</p>`},
+  'c-boundary':{eyebrow:'Zone C · operator ceiling', title:'policies/boundary/org-boundary.yaml', body:`
+    <p>The most any agent policy in this repo may ever allow. It is wider than <code>agent-policy.yaml</code>, so a policy can grow without the operator, but never past these invariants:</p>
+    <ul>
+      <li>Landlock <code>hard_requirement</code>; uid/gid 1000</li>
+      <li>read-only REST, <code>/usr/bin/curl</code> only, to api.github.com, raw.githubusercontent.com, httpbin.org</li>
+      <li>the local MCP server: <code>POST /mcp</code> only</li>
+      <li>nothing else, so no metadata address and no link-local</li>
+    </ul>
+    <p>Signed by the operator (namespace <code>openshell-boundary</code>). In this demo one key plays both operator and reviewer; in practice they differ.</p>`},
+  'e-mcp':{eyebrow:'Zone E · bonus', title:'Fake MCP server (bonus/mcp-demo/server.py)', body:`
+    <p>JSON-RPC 2.0 over <code>POST /mcp</code>, Python stdlib, bound to <code>127.0.0.1:8766</code>. Tools: <code>search_issues</code>, <code>read_file</code>, <code>delete_repo</code>. Every result is canned text: nothing is read, written or deleted.</p>
+    <p>The sandbox reaches it as <code>host.openshell.internal</code>, OpenShell's name for the host. Policy DNS maps it through a synthetic address to 127.0.0.1.</p>
+    <p>It logs every request that actually arrives:</p>
+    <pre>MCP-SERVER served tools/list
+MCP-SERVER served tools/call search_issues arguments={"query": "label:bug"}
+MCP-SERVER-CHECK denied calls never arrived</pre>
+    <p>It advertises <code>delete_repo</code>, the way a server update can add a tool, and the allowlist still denies calling it.</p>`}
 };
 NODES.forEach(n=>{
   if(!DETAILS[n.id]) return;
@@ -663,8 +754,9 @@ $('backdrop').addEventListener('click', closeDrawer);
 
 /* ---------- play mode ---------- */
 const STEPS = [
-  {ids:['h-verify','h-preflight','a-pre','c-gateway'], txt:'<code>make verify</code> runs preflight first: Docker ≥ 28, host networking on, OpenShell 0.1.3, gateway Connected.'},
-  {ids:['h-verify','a-create','c-gateway','c-policy','c-provider'], txt:'It asks the gateway for a fresh sandbox from the image, with <code>agent-policy.yaml</code> and the fake <code>demo-github</code> provider.'},
+  {ids:['h-verify','h-preflight'], txt:'<code>make verify</code> runs preflight first: Docker ≥ 28, host networking on, OpenShell 0.1.3 and its prover, gateway Connected.'},
+  {ids:['h-gate','a-gate-b','c-boundary','a-gate-p','c-policy'], txt:'Before anything runs, the <b>policy gate</b>: the boundary carries the operator\'s signature, <code>openshell-prover</code> proves the policy is <code>within_boundary</code>, and the policy matches the reviewer\'s signature.'},
+  {ids:['h-verify','a-create','c-gateway','c-policy','c-provider'], txt:'Only then does it ask the gateway for a fresh sandbox, with that exact policy and the fake <code>demo-github</code> provider.'},
   {ids:['c-gateway','a-spawn','c-policy','a-apply','x-agent','x-landlock','x-kernel','c-provider','a-place','x-env'], txt:'The agent starts already boxed in: uid 1000, a Landlock view of the filesystem, and only a placeholder credential.'},
   {ids:['x-agent','a-read','x-landlock','a-lldeny','x-secret','a-setuid','x-kernel'], txt:'Kernel denials happen inside the box: the world-readable secret (Landlock) and <code>setuid(0)</code> (non-root).'},
   {ids:['x-agent','a-trunk','s-proxy'], txt:'There is no route out except the supervisor proxy. Every connection becomes a decision.'},
@@ -672,7 +764,8 @@ const STEPS = [
   {ids:['s-proxy','g-l7','a-deny-write','a-allow-get','e-github'], txt:'Read-only L7: GET to GitHub passes, DELETE and POST are denied by method, <code>engine:l7</code>.'},
   {ids:['x-env','a-envcarry','g-cred','a-deny-cred','e-httpbin','a-allow-cred','e-github'], txt:'The placeholder sent to httpbin.org, an allowed host, is refused: <code>credential_endpoint_mismatch</code> + <code>FINDING:BLOCKED</code>.'},
   {ids:['s-proxy','a-evidence','c-audit'], txt:'Every decision is written to OpenShell\'s own OCSF audit log. That log is the witness.'},
-  {ids:['c-audit','a-logs','h-grader','a-probe','h-verify'], txt:'<code>verify.sh</code> reads the log, matches all ten rows, prints <b>10 PASS / 0 FAIL</b> and exits 0. Any miss exits 1.'},
+  {ids:['c-audit','a-logs','h-grader','a-probe','h-verify'], txt:'<code>verify.sh</code> grades all twelve rows: <b>12 PASS / 0 FAIL</b>, exit 0. <code>make evidence</code> chains and signs the exact lines.'},
+  {ids:['h-kyverno','g-mw','a-mw-out','k-guard','a-k1','k-authz','a-k2','a-mcp-deny','a-mcp-allow','e-mcp'], txt:'Bonus: on the MCP server, OpenShell admits only <code>POST /mcp</code>, and Kyverno decides each tool call. <code>search_issues</code> goes through; <code>delete_repo</code>, flag arguments and <code>../</code> paths never arrive.'},
 ];
 let playIdx = -1, playTimer = null;
 const cap = $('caption');
@@ -697,13 +790,19 @@ document.addEventListener('keydown', e=>{
   if(e.altKey || e.ctrlKey || e.metaKey) return;
   if(e.key === 'Escape'){ closeDrawer(); return; }
   if(/^[0-9]$/.test(e.key)){ const i = e.key === '0' ? 9 : parseInt(e.key,10)-1; selectControl(i); }
+  if(e.key === '-') selectControl(10);
+  if(e.key === '=') selectControl(11);
 });
 
 /* ---------- zoom / fit ---------- */
 const STAGE_W = 1800, STAGE_H = 1080;
 const canvasScroll = $('canvasScroll'), stageSizer = $('stageSizer'), zoomLabel = $('zoom-label');
 let zoom = 1, fitZoom = 1, userZoomed = false;
-function computeFitZoom(){ return Math.min((canvasScroll.clientWidth-4)/STAGE_W, (canvasScroll.clientHeight-4)/STAGE_H, 1.25); }
+function computeFitZoom(){
+  const w = canvasScroll.clientWidth - 4, h = canvasScroll.clientHeight - 4;
+  if(w <= 0 || h <= 0) return 1;   // not laid out yet (hidden tab); refit on resize/load
+  return Math.min(w/STAGE_W, h/STAGE_H, 1.25);
+}
 function applyZoom(z, opts){
   opts = opts || {};
   zoom = Math.max(fitZoom*0.4, Math.min(2.5, z));

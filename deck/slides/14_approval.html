@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 14px; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .hop { border: 2px solid #1A1A1A; margin-right: 22px; padding: 10px 12px; position: relative; min-height: 150px; display: flex; flex-direction: column; }
+  .hop:last-child { margin-right: 0; }
+  .hop::after { content: "→"; position: absolute; right: -19px; top: 42%; font-weight: 900; font-size: 18px; }
+  .hop:last-child::after { content: ""; }
+  .hop .who { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D9381E; margin-bottom: 4px; }
+  .hop h3 { font-size: 15.5px; font-weight: 800; line-height: 1.25; margin-bottom: 4px; }
+  .hop p { font-size: 12.8px; line-height: 1.45; color: #333; }
+  .hop code { font-size: 11.3px; }
+  .hop.x { background: #FFF1EE; } .hop.os { background: #FBF4E4; } .hop.g { background: #EEF5EE; }
+  .term { font-size: 11.4px; line-height: 1.65; padding: 12px 14px; margin-top: 14px; }
+  .term .h { color: #fff; font-weight: 700; }
+  .keys { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px; }
+  .keys div { border-top: 4px solid #1A1A1A; padding-top: 7px; font-size: 13.5px; line-height: 1.45; color: #333; }
+  .keys b { display: block; font-size: 15px; margin-bottom: 2px; }
+  /* sizing pass */
+  .hop { min-height: 190px; padding: 13px 14px; }
+  .hop h3 { font-size: 17px; }
+  .hop p { font-size: 13.8px; }
+  .term { font-size: 12.2px; line-height: 1.85; padding: 14px 16px; margin-top: 18px; }
+  .keys { margin-top: 20px; }
+  .keys div { font-size: 14.5px; }
+  .keys b { font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">14 — Approval <span>· scripts/approval-gate.sh · make approval-demo</span></div>
+    <h1>An approval can't take the agent past the boundary</h1>
+    <div class="flow">
+      <div class="hop x"><div class="who">Agent</div><h3>Tries two unlisted hosts</h3><p><code>example.com</code> (outside the boundary) and <code>raw.githubusercontent.com</code> (inside it, but not in the agent's policy). Both are denied.</p></div>
+      <div class="hop os"><div class="who">OpenShell 0.1.3</div><h3>Proposes rules from the denials</h3><p>Each comes back as raw L4 access for curl, at 65% confidence. Its own check reports <b>"no new findings"</b>.</p></div>
+      <div class="hop g"><div class="who">Approval gate</div><h3>Composes and proves</h3><p>Adds exactly what the proposal allows to the current policy, then runs <code>openshell-prover</code> against the signed boundary.</p></div>
+      <div class="hop g"><div class="who">Decision</div><h3>Rejected by proof, or a person decides</h3><p>Outside → <code>openshell rule reject</code>, with the counterexample as the reason. Inside → y/N at a terminal. Never automatic.</p></div>
+    </div>
+<div class="term"><span class="h">PROPOSAL                                   OPENSHELL'S OWN CHECK     BOUNDARY PROOF     DECISION</span>
+raw.githubusercontent.com:443 [L4] curl    prover: no new findings   <span class="d">exceeds_boundary</span>   <span class="d">rejected</span> (raw l4 to raw.githubusercontent.com:443)
+  <span class="m">hint: the boundary does allow a narrower rule here (read-only REST, curl): add it to agent-policy.yaml, make policy-sign</span>
+example.com:443 [L4] curl                  prover: no new findings   <span class="d">exceeds_boundary</span>   <span class="d">rejected</span> (raw l4 to example.com:443)
+<span class="g">2/2 proposals rejected by proof</span>   <span class="m"># openshell rule get guardrails-approval → Status: rejected ×2</span></div>
+    <div class="keys">
+      <div><b>Same proof, new entry point</b>Developer-plane policy changes and agent-requested widenings go through one check against one ceiling.</div>
+      <div><b>Narrower is possible</b>The raw L4 proposal is too wide, but the gate points at the read-only REST rule the boundary would accept.</div>
+      <div><b>Humans stay in the loop</b>Inside the boundary, it waits for a person. Without a terminal it stays pending.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 14 / 20</span>
+  </div>
+</div>
+</body>
+</html>

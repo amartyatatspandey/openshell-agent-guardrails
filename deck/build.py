@@ -6,6 +6,7 @@ inline, because slides render from srcdoc where relative links don't resolve.
 """
 import json
 import pathlib
+import re
 
 DECK = pathlib.Path(__file__).resolve().parent
 SLIDES_DIR = DECK / "slides"
@@ -18,8 +19,15 @@ def main() -> None:
     css = (SLIDES_DIR / "base.css").read_text()
     files = sorted(SLIDES_DIR.glob("[0-9][0-9]_*.html"))
     slides, live = [], []
+    total = len(files)
     for i, path in enumerate(files):
-        html = path.read_text().replace(BASE_LINK, "<style>\n" + css + "</style>")
+        # Keep "PAGE NN / TT" and the "NN — " kicker in step with file order.
+        src = path.read_text()
+        fixed = re.sub(r"PAGE \d+ / \d+", f"PAGE {i + 1:02d} / {total}", src)
+        fixed = re.sub(r'(<div class="kicker">(?:<span class="dot"></span>)?)\d{2} —', rf"\g<1>{i + 1:02d} —", fixed)
+        if fixed != src:
+            path.write_text(fixed)
+        html = fixed.replace(BASE_LINK, "<style>\n" + css + "</style>")
         slides.append(html)
         if path.name in INTERACTIVE:
             live.append(i)

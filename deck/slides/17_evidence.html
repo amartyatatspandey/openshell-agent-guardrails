@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 14px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .term { font-size: 11.6px; line-height: 1.62; padding: 12px 16px; }
+  .what { border: 2px solid #1A1A1A; }
+  .what .label { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; background: #1A1A1A; color: #fff; padding: 8px 14px; }
+  .what ul { list-style: none; padding: 10px 16px 12px 16px; }
+  .what li { font-size: 13.5px; line-height: 1.45; color: #333; padding: 5px 0 5px 16px; position: relative; border-bottom: 1px solid #EEE; }
+  .what li:last-child { border-bottom: 0; }
+  .what li::before { content: ""; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; background: #D9381E; }
+  .what code { font-size: 11.6px; }
+  .chain { margin-top: 12px; border: 2px solid #1A1A1A; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12.3px; line-height: 1.6; color: #1A1A1A; }
+  .chain .m { color: #8a8a8a; }
+  .strip { margin-top: 14px; }
+  /* sizing pass */
+  .term { font-size: 12.6px; line-height: 1.85; padding: 16px 18px; }
+  .what li { font-size: 14.6px; padding: 7px 0 7px 16px; }
+  .what li::before { top: 13px; }
+  .chain { font-size: 13.4px; margin-top: 16px; padding: 12px 16px; }
+  .strip { margin-top: 20px; }
+  .strip .text { font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">17 — Compliance domain <span>· make evidence · make evidence-verify</span></div>
+    <h1>Evidence you can check after the fact</h1>
+    <div class="grid">
+      <div>
+        <div class="what">
+          <div class="label">.out/evidence/evidence-&lt;UTC&gt;.json</div>
+          <ul>
+            <li>OpenShell, prover and Docker versions, and the image ID</li>
+            <li>SHA-256 of the policy, both signatures, the boundary, the expectations table, the probes, the grader</li>
+            <li>The policy-gate output and the prover's JSON</li>
+            <li>Every graded row with the <b>exact line</b> that proved it</li>
+            <li>Signed with the review key, namespace <code>openshell-evidence</code></li>
+          </ul>
+        </div>
+        <div class="chain">h<sub>0</sub> = sha256("openshell-guardrails-evidence-v1")<br>h<sub>i</sub> = sha256(h<sub>i−1</sub> ‖ id ‖ result ‖ evidence line)<br><span class="m">change, drop or reorder a row → every later hash changes</span></div>
+      </div>
+<div class="term"><span class="m">$ make evidence</span>
+12 PASS, 0 FAIL (12 rows)
+evidence: 12 PASS, 0 FAIL (12 rows), chain head 786b0cff38b53d79…
+signed:   .out/evidence/evidence-20261014T061039Z.json.sig
+
+<span class="m">$ make evidence-verify</span>
+signature: <span class="g">valid</span> (openshell-policy-review)
+chain:     <span class="g">intact</span>, 12 rows, 12 PASS / 0 FAIL
+files:     unchanged since the run
+
+<span class="m">$ # flip one row's result in a copy of the bundle</span>
+signature: <span class="d">INVALID</span> (the bundle changed after it was signed)
+chain:     <span class="d">BROKEN</span> at row 3 (egress-default-deny)</div>
+    </div>
+    <div class="strip">
+      <div class="tag ink">Scope</div>
+      <div class="text">This is tamper-evident <b>evidence</b>, not a retention system: the bundle stays on this machine. In a fleet it is the record you would ship to a SIEM, and the one an auditor could re-check without trusting the person who ran it.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 17 / 20</span>
+  </div>
+</div>
+</body>
+</html>

@@ -38,11 +38,11 @@
     <div class="kicker">06 — Architecture at a glance</div>
     <h1>One run, end to end</h1>
     <div class="flow">
-      <div class="step h"><div class="n">1</div><h3>make verify</h3><p>Preflight checks Docker, host networking, the OpenShell version and gateway status.</p><div class="z">Operator laptop</div></div>
+      <div class="step h"><div class="n">1</div><h3>make verify</h3><p>Preflight, then the <b>policy gate</b>: proven inside the signed boundary, and the reviewed text. No proof, no sandbox.</p><div class="z">Operator laptop</div></div>
       <div class="step c"><div class="n">2</div><h3>Gateway creates the sandbox</h3><p>From the image, with <code>agent-policy.yaml</code> and the fake <code>demo-github</code> provider.</p><div class="z">Control plane</div></div>
       <div class="step x"><div class="n">3</div><h3>The agent makes ten attempts</h3><p>One labelled attempt per control. Kernel-level ones are stopped right here.</p><div class="z">Sandbox · untrusted</div></div>
       <div class="step s"><div class="n">4</div><h3>Supervisor decides</h3><p>Every connection goes through its proxy: egress, DNS, L7, binary, credential binding.</p><div class="z">Supervisor · trusted</div></div>
-      <div class="step e"><div class="n">5</div><h3>Log is graded</h3><p><code>verify.sh</code> reads the OCSF log, matches ten patterns, prints the matrix, sets the exit code.</p><div class="z">Evidence</div></div>
+      <div class="step e"><div class="n">5</div><h3>Log is graded</h3><p><code>verify.sh</code> reads the OCSF log, grades 12 rows, sets the exit code. <code>make evidence</code> signs the result.</p><div class="z">Evidence</div></div>
     </div>
     <div class="zones">
       <div class="zone h"><b>ZONE H</b>Operator laptop</div>
@@ -59,7 +59,7 @@
   </div>
   <div class="footer">
     <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
-    <span>PAGE 06 / 15</span>
+    <span>PAGE 06 / 20</span>
   </div>
 </div>
 </body>

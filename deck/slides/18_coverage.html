@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 6px; }
+  .src { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; border: 2px solid #1A1A1A; }
+  th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; padding: 8px 12px; background: #1A1A1A; color: #fff; }
+  td { padding: 9px 12px; border-bottom: 1px solid #E6E6E6; font-size: 13px; line-height: 1.4; color: #333; vertical-align: top; }
+  td:first-child { font-weight: 800; color: #1A1A1A; white-space: nowrap; }
+  td.no { color: #8a8a8a; }
+  td code { font-size: 11.3px; }
+  .trifecta { margin-top: 14px; display: grid; grid-template-columns: 210px 1fr 1fr 1fr; border: 2px solid #1A1A1A; }
+  .trifecta div { padding: 9px 12px; font-size: 12.8px; line-height: 1.45; color: #333; border-right: 1px solid #E0E0E0; }
+  .trifecta div:last-child { border-right: 0; }
+  .trifecta .t { background: #D9381E; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; }
+  .trifecta b { display: block; font-size: 13.5px; }
+  /* sizing pass */
+  td { padding: 13px 14px; font-size: 14.2px; }
+  th { padding: 10px 14px; }
+  .src { font-size: 13px; margin-bottom: 18px; }
+  .trifecta { margin-top: 20px; }
+  .trifecta div { font-size: 13.8px; padding: 12px 14px; }
+  .trifecta b { font-size: 14.6px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">18 — Against current research</div>
+    <h1>Where this sits among the MCP control categories</h1>
+    <div class="src">Errico, Ngiam, Sojan, "Securing the Model Context Protocol (MCP): Risks, Controls, and Governance", arXiv:2511.20920, Nov 2025</div>
+    <table>
+      <tr><th>Category</th><th>Enforced and graded here</th><th>Not here, stated in the README</th></tr>
+      <tr><td>AuthN / AuthZ</td><td>Credential bound to host, port and path; the agent holds a placeholder. Per-tool allowlist on MCP calls.</td><td class="no">Per-user OAuth 2.1, per-user RBAC</td></tr>
+      <tr><td>Provenance</td><td>OpenShell's OCSF log; evidence bundle with the exact line per control, hash-chained and signed.</td><td class="no">SIEM shipping, retention tiers, redaction</td></tr>
+      <tr><td>Sandboxing</td><td>Landlock (hard requirement), non-root, default-deny egress, binary identity, no host credentials inside.</td><td class="no">Resource quotas</td></tr>
+      <tr><td>Inline policy</td><td>Kyverno CEL per tool and argument, before credentials, <b>fail-closed</b>; OpenShell L7 method and path rules.</td><td class="no">DLP on payloads, response inspection, rate limits</td></tr>
+      <tr><td>Governance</td><td>Signed operator boundary with a containment proof; reviewer signatures; agent proposals rejected by proof; a tool advertised later is still not callable.</td><td class="no">Private registry, SBOMs, signed server builds</td></tr>
+    </table>
+    <div class="trifecta">
+      <div class="t">The "lethal trifecta"</div>
+      <div><b>Private data</b>Landlock hides the secret file, and the credential is only a placeholder.</div>
+      <div><b>Untrusted content</b>Assume the agent is already steered; nothing here depends on it behaving.</div>
+      <div><b>External communication</b>Default-deny egress, credential binding and the MCP allowlist close the way out.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 18 / 20</span>
+  </div>
+</div>
+</body>
+</html>

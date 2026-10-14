@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 12px; }
+  .layers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .ly { border: 2px solid #1A1A1A; padding: 10px 14px; }
+  .ly .who { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D9381E; margin-bottom: 3px; }
+  .ly h3 { font-size: 15.5px; font-weight: 800; margin-bottom: 4px; }
+  .ly p { font-size: 12.8px; line-height: 1.45; color: #333; }
+  .ly code { font-size: 11.3px; }
+  .ly.os { background: #FBF4E4; } .ly.ky { background: #EEF2F9; } .ly.fc { background: #FFF1EE; }
+  .grid { display: grid; grid-template-columns: 1fr 340px; gap: 14px; margin-top: 12px; }
+  .term { font-size: 10.9px; line-height: 1.62; padding: 10px 14px; white-space: pre; }
+  .note { border: 2px solid #1A1A1A; padding: 10px 14px; font-size: 12.8px; line-height: 1.5; color: #333; }
+  .note h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; color: #D9381E; }
+  .note li { list-style: none; margin-bottom: 7px; padding-left: 12px; position: relative; }
+  .note li::before { content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; background: #D9381E; }
+  .note code { font-size: 11.2px; }
+  /* sizing pass */
+  .ly { padding: 13px 16px; }
+  .ly h3 { font-size: 16.5px; }
+  .ly p { font-size: 13.8px; }
+  .grid { margin-top: 16px; }
+  .term { font-size: 11.6px; line-height: 1.82; padding: 14px 16px; }
+  .note { font-size: 13.6px; padding: 13px 16px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">16 — Bonus <span>· MCP firewall · bonus/kyverno-guard/policy/mcp-tool-guard.yaml</span></div>
+    <h1>MCP firewall: per tool, per argument</h1>
+    <div class="layers">
+      <div class="ly os"><div class="who">OpenShell decides where</div><h3>Only POST /mcp on that host</h3><p>The fake MCP server is reached as <code>host.openshell.internal</code>. L7 <code>rules</code> admit <code>POST /mcp</code> and nothing else, so <code>POST /admin</code> is an <code>engine:l7</code> denial.</p></div>
+      <div class="ly ky"><div class="who">Kyverno decides what</div><h3>CEL reads the JSON-RPC body</h3><p>Tool allowlist <code>[search_issues, read_file]</code>. Flag-shaped arguments and <code>..</code> or absolute paths are denied. The server advertises <code>delete_repo</code>; it still can't be called.</p></div>
+      <div class="ly fc"><div class="who">Fail-closed</div><h3>No decision means no</h3><p>A body Kyverno can't parse errors out, and <code>on_error: fail_closed</code> denies it. Every denial happens <b>before credentials</b>, and the server never sees it.</p></div>
+    </div>
+    <div class="grid">
+<div class="term"><span class="m"># OpenShell audit log, make kyverno (real output, trimmed)</span>
+POST …:8766/mcp [engine:middleware] <span class="d">DENIED</span> reason:middleware_denied:kyverno_guard:<span class="d">mcp_tool_denied</span>
+POST …:8766/mcp [engine:middleware] <span class="d">DENIED</span> reason:middleware_denied:kyverno_guard:<span class="d">mcp_arg_flag_injection</span>
+POST …:8766/mcp [engine:middleware] <span class="d">DENIED</span> reason:middleware_denied:kyverno_guard:<span class="d">mcp_arg_path_traversal</span>
+POST …:8766/mcp [engine:middleware] <span class="d">DENIED</span> failed:true reason:<span class="d">middleware_failed</span>: external_service_error
+POST …:8766/admin [engine:l7] <span class="d">DENIED</span> POST /admin not permitted by policy
+
+<span class="m"># fake MCP server: everything that actually arrived</span>
+MCP-SERVER served tools/list
+MCP-SERVER served tools/call search_issues arguments={"query": "label:bug"}
+<span class="g">MCP-SERVER-CHECK denied calls never arrived</span>
+
+<span class="g">10 PASS, 0 FAIL (10 rows)</span>   <span class="m"># same verify.sh, bonus/expected_bonus.tsv</span></div>
+      <div class="note">
+        <h3>Found by testing kyverno-authz v0.4.0</h3>
+        <ul>
+          <li><b>An allow from one policy decided the request.</b> The GitHub rule's <code>Allowed()</code> overrode the MCP rule's deny. Fixed with <code>matchConditions</code> per policy.</li>
+          <li><b>A policy that fails to compile allows everything, silently.</b> <code>mcp.Parse</code> doesn't exist in v0.4.0, and the docs' <code>v1</code> needs to be <code>v1alpha1</code>. So <code>make kyverno</code> proves both rules deny before it touches the gateway.</li>
+          <li><b>The proof still applies.</b> The policy gate proves this policy too, with the middleware stripped, since middleware can only narrow.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 16 / 20</span>
+  </div>
+</div>
+</body>
+</html>

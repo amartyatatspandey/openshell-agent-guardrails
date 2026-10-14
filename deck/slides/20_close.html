@@ -18,9 +18,9 @@
   .closing .big span { color: #D9381E; }
   .closing .who { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #555; text-align: right; line-height: 1.6; }
   /* sizing pass: fill the 720px frame */
-  .not li { font-size: 16px; padding: 11px 0 11px 24px; }
-  .not li::before { top: 11px; }
-  .term { font-size: 15px; line-height: 1.85; padding: 18px 22px; }
+  .not li { font-size: 14.5px; padding: 8px 0 8px 24px; }
+  .not li::before { top: 8px; }
+  .term { font-size: 13.4px; line-height: 1.7; padding: 14px 18px; }
   .ask { font-size: 15px; margin-top: 16px; }
   .closing { margin-top: 30px; padding: 22px 26px; }
   .closing .big { font-size: 24px; }
@@ -31,7 +31,7 @@
 <div class="slide-container">
   <div class="accent-rule"></div>
   <div class="inner">
-    <div class="kicker">15 — Scope, and how to run it</div>
+    <div class="kicker">20 — Scope, and how to run it</div>
     <h1>Precise about what it is, and what it isn't</h1>
     <div class="grid">
       <div class="box">
@@ -41,15 +41,18 @@
           <li><b>Not AIControls.</b> It's the runtime evidence a fleet product would want to collect.</li>
           <li><b>Not production-grade OpenShell.</b> v0.1.3 is alpha, so it's pinned.</li>
           <li><b>Not the cost domain.</b> Spend and quotas aren't measured here.</li>
-          <li><b>Not a retention system.</b> Compliance evidence is the local log + matrix.</li>
+          <li><b>Not response-side.</b> Injection carried in a tool's response isn't inspected.</li>
+          <li><b>Not a retention system.</b> The signed evidence stays on this machine.</li>
         </ul></div>
       </div>
       <div>
 <div class="term"><span class="m"># on your machine (Docker Desktop, host networking on)</span>
 make setup        <span class="m"># image, profile, fake provider</span>
-make verify       <span class="m"># preflight → sandbox → <span class="g">10 PASS / 0 FAIL</span></span>
-make demo         <span class="m"># same, with attempt + raw-log panels</span>
-make kyverno      <span class="m"># bonus: Kyverno decides</span>
+make verify       <span class="m"># gate → sandbox → <span class="g">12 PASS / 0 FAIL</span></span>
+make policy-tamper <span class="m"># 8 edits, 8 refusals</span>
+make approval-demo <span class="m"># proposals rejected by proof</span>
+make evidence     <span class="m"># signed, hash-chained</span>
+make kyverno      <span class="m"># bonus: paths + MCP, 10 rows</span>
 make kyverno-stop <span class="m"># restore gateway.toml exactly</span>
 make clean</div>
         <div class="ask">Prerequisites, checks and the full control table are in <code>README.md</code>. <code>docs/ARCHITECTURE.md</code> says what is enforced where.</div>
@@ -62,7 +65,7 @@ make clean</div>
   </div>
   <div class="footer">
     <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
-    <span>PAGE 15 / 15</span>
+    <span>PAGE 20 / 20</span>
   </div>
 </div>
 </body>

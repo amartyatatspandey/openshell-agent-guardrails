@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { margin-bottom: 14px; }
+  .grid { display: grid; grid-template-columns: 430px 1fr; gap: 18px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .st { border: 2px solid #1A1A1A; padding: 10px 14px; display: grid; grid-template-columns: 30px 1fr; gap: 10px; }
+  .st .n { width: 26px; height: 26px; background: #3f7a52; color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .st h3 { font-size: 15.5px; font-weight: 800; margin-bottom: 3px; }
+  .st p { font-size: 13px; line-height: 1.45; color: #333; }
+  .st code { font-size: 11.5px; }
+  .term { font-size: 11.6px; line-height: 1.62; padding: 12px 14px; }
+  .term .h { color: #fff; font-weight: 700; }
+  .strip { margin-top: 14px; }
+  .strip .text { font-size: 13.2px; }
+  /* sizing pass */
+  .st { padding: 13px 16px; }
+  .st h3 { font-size: 16.5px; }
+  .st p { font-size: 13.8px; }
+  .term { font-size: 12.1px; line-height: 1.74; padding: 14px 16px; }
+  .strip { margin-top: 18px; }
+  .strip .text { font-size: 13.8px; }
+</style>
+</head>
+<body>
+<div class="slide-container">
+  <div class="accent-rule"></div>
+  <div class="inner">
+    <div class="kicker">09 — Developer plane <span>· scripts/policy-gate.sh · make policy-tamper</span></div>
+    <h1>Proven, then signed, before a sandbox exists</h1>
+    <div class="grid">
+      <div class="steps">
+        <div class="st"><div class="n">1</div><div><h3>The ceiling is genuine</h3><p>The operator boundary <code>org-boundary.yaml</code> must carry the operator's signature. Otherwise a widened boundary makes any proof meaningless.</p></div></div>
+        <div class="st"><div class="n">2</div><div><h3>A proof, not a lint</h3><p><code>openshell-prover</code> ships with OpenShell 0.1.3. It must return <code>within_boundary</code>. A widening comes back <code>exceeds_boundary</code> with a concrete counterexample. <code>unsupported</code> also refuses.</p></div></div>
+        <div class="st"><div class="n">3</div><div><h3>The text someone read</h3><p>The policy must match the reviewer's signature, byte for byte. If the gate refuses, <b>no sandbox is created</b>. These are rows 11–12 of the matrix.</p></div></div>
+      </div>
+<div class="term"><span class="m">$ make policy-tamper     # edited copies, old signature kept</span>
+<span class="h">CASE            PROVER             SIGNATURE  WHY</span>
+new-host        <span class="d">exceeds_boundary</span>   <span class="d">invalid</span>    GET example.com:443/
+read-write      <span class="d">exceeds_boundary</span>   <span class="d">invalid</span>    a write method on httpbin.org
+root            <span class="d">exceeds_boundary</span>   <span class="d">invalid</span>    run_as_user 1000 -> 0
+landlock-soft   <span class="d">exceeds_boundary</span>   <span class="d">invalid</span>    hard_requirement -> best_effort
+other-binary    <span class="d">exceeds_boundary</span>   <span class="d">invalid</span>    GET api.github.com via python3.12
+write-path      <span class="k">unsupported</span>        <span class="d">invalid</span>    /opt write path: refused
+in-boundary     <span class="g">within_boundary</span>    <span class="d">invalid</span>    proof passes; bytes not reviewed
+both-widened    not run            -          boundary untrusted
+<span class="g">8/8 edited policies refused</span>
+
+<span class="m">$ make policy-gate</span>
+POLICY-GATE boundary-signature valid policies/boundary/org-boundary.yaml
+POLICY-GATE boundary <span class="g">within_boundary</span> domains=filesystem,network_l4,
+                     network_rest,process,landlock
+POLICY-GATE signature <span class="g">valid</span> signer=openshell-policy-review
+POLICY-GATE <span class="g">accept</span> policies/openshell/agent-policy.yaml</div>
+    </div>
+    <div class="strip">
+      <div class="tag ink">Why both</div>
+      <div class="text">The proof answers the <b>operator</b>: could this ever allow more than the ceiling? The signature answers the <b>reviewer</b>: is this the text I read? <code>in-boundary</code> passes one and fails the other; <code>both-widened</code> shows why the ceiling is signed too.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
+    <span>PAGE 09 / 20</span>
+  </div>
+</div>
+</body>
+</html>

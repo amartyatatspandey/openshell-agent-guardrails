@@ -31,16 +31,18 @@
   .case { padding: 14px 16px; }
   .case h3 { font-size: 16.5px; }
   .case p { font-size: 14px; }
+  /* sizing pass */
+  .term { font-size: 11.3px; }
 </style>
 </head>
 <body>
 <div class="slide-container">
   <div class="accent-rule"></div>
   <div class="inner">
-    <div class="kicker">10 — Verification <span>· verify.sh</span></div>
+    <div class="kicker">11 — Verification <span>· verify.sh</span></div>
     <h1>Verification, not vibes</h1>
     <div class="pipe">
-      <div><b>01</b>make verify → preflight</div>
+      <div><b>01</b>preflight → policy gate (proof + signatures)</div>
       <div><b>02</b>sandbox create --policy --provider</div>
       <div><b>03</b>run_all.sh inside the sandbox</div>
       <div><b>04</b>openshell logs --source sandbox</div>
@@ -49,9 +51,9 @@
     </div>
     <div class="grid">
       <div class="score">
-        <div class="num">10<span>/</span>0</div>
+        <div class="num">12<span>/</span>0</div>
         <div class="lbl">PASS / FAIL, fresh run</div>
-        <div class="ex">exit 0 · all rows matched<br>exit 1 · any row failed<br>exit 2 · setup/probe error</div>
+        <div class="ex">exit 0 · all rows matched<br>exit 1 · any row failed<br>exit 2 · setup/probe error<br>gate refused · no sandbox</div>
       </div>
 <div class="term"><span class="m"># openshell logs guardrails-demo --source sandbox   (real output, trimmed)</span>
 HTTP:GET [HIGH] <span class="d">DENIED</span> GET  [policy:public_echo engine:credential-binding] [reason:credential_endpoint_mismatch]
@@ -62,17 +64,18 @@ NET:OPEN [MED] <span class="d">DENIED</span> /usr/bin/curl(0) -> 169.254.169.254
 HTTP:DELETE [MED] <span class="d">DENIED</span> DELETE http://api.github.com:443/repos/example-org/… [policy:github_readonly engine:l7]
 HTTP:POST [MED] <span class="d">DENIED</span> POST http://api.github.com:443/repos/example-org/…/issues [policy:github_readonly engine:l7]
 NET:OPEN [MED] <span class="d">DENIED</span> /usr/bin/python3.12(0) -> api.github.com:443 [reason:transparent_tcp_policy_denied]
-<span class="g">10 PASS, 0 FAIL (10 rows)</span></div>
+POLICY-GATE boundary <span class="g">within_boundary</span> · signature <span class="g">valid</span>
+<span class="g">12 PASS, 0 FAIL (12 rows)</span></div>
     </div>
     <div class="cases">
       <div class="case"><h3>Patterns from real output</h3><p>Every regex was checked against captured OpenShell lines. <code>tests/fixtures/</code> holds real logs, not synthetic ones.</p></div>
       <div class="case"><h3>The grader can fail</h3><p>A fixture with the egress line removed makes <code>verify.sh</code> exit <b>1</b>. A green run is only green if it could have been red.</p></div>
-      <div class="case"><h3>Run the way you'll run it</h3><p>Re-run end to end from a fresh clone before pushing. That's how I caught the preflight bug on slide 14.</p></div>
+      <div class="case"><h3>Run the way you'll run it</h3><p>Re-run end to end from a fresh clone before pushing. That's how I caught the preflight bug on slide 19.</p></div>
     </div>
   </div>
   <div class="footer">
     <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
-    <span>PAGE 10 / 15</span>
+    <span>PAGE 11 / 20</span>
   </div>
 </div>
 </body>

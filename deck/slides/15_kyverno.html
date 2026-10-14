@@ -18,7 +18,7 @@
   .hop .port { margin-top: auto; padding-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #555; }
   .hop.os { background: #FBF4E4; } .hop.ky { background: #EEF2F9; } .hop.ag { background: #FFF1EE; }
   .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; margin-top: 14px; }
-  .term { font-size: 11.2px; line-height: 1.6; padding: 10px 14px; }
+  .term { font-size: 10.8px; line-height: 1.5; padding: 9px 14px; }
   .facts { display: flex; flex-direction: column; gap: 8px; }
   .fact { border-left: 4px solid #1A1A1A; padding: 2px 0 2px 10px; font-size: 13px; line-height: 1.45; color: #333; }
   .fact b { color: #1A1A1A; }
@@ -34,7 +34,7 @@
 <div class="slide-container">
   <div class="accent-rule"></div>
   <div class="inner">
-    <div class="kicker">13 — Bonus, not graded <span>· make kyverno / make kyverno-stop</span></div>
+    <div class="kicker">15 — Bonus, not graded <span>· make kyverno / make kyverno-stop</span></div>
     <h1>Kyverno decides. <span class="hl">OpenShell enforces.</span></h1>
     <div class="seq">
       <div class="hop ag"><div class="who">Agent</div><h3>curl GET to api.github.com</h3><p>A read OpenShell's network policy allows.</p><div class="port">sandbox</div></div>
@@ -49,6 +49,8 @@ apiVersion: <span class="k">policies.kyverno.io/v1alpha1</span>
 kind: ValidatingPolicy
 spec:
   evaluation: { mode: HTTP }
+  matchConditions:   <span class="m"># only its own traffic (slide 16)</span>
+  - expression: object.attributes.host == "api.github.com"
   validations:
   - expression: &gt;
       object.attributes.host == "api.github.com" &amp;&amp;
@@ -58,7 +60,7 @@ spec:
         : http.<span class="g">Allowed()</span>.Response()</div>
       <div class="facts">
         <div class="fact"><b>One rule set at the point the agent acts.</b> That's the AIControls idea, wired to NVIDIA's runtime to see if it holds. It does.</div>
-        <div class="fact"><b>Layered, not replaced.</b> DELETE and POST never reach Kyverno, because OpenShell's L7 rule denies them first.</div>
+        <div class="fact"><b>Layered, not replaced.</b> DELETE and POST never reach Kyverno, because OpenShell's L7 rule denies them first. <b>Next slide:</b> the same hook deciding MCP tool calls.</div>
         <div class="fact"><b>Fail-closed.</b> If Kyverno is unreachable, the request is denied.</div>
         <div class="fact"><b>Leaves your machine as it found it.</b> <code>make kyverno-stop</code> restores <code>gateway.toml</code> byte-identical. I checked.</div>
       </div>
@@ -71,7 +73,7 @@ HTTP:GET [MED] <span class="d">DENIED</span> … [engine:middleware] [reason:<sp
   </div>
   <div class="footer">
     <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
-    <span>PAGE 13 / 15</span>
+    <span>PAGE 15 / 20</span>
   </div>
 </div>
 </body>

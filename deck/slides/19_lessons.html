@@ -28,7 +28,7 @@
 <div class="slide-container">
   <div class="accent-rule"></div>
   <div class="inner">
-    <div class="kicker">14 — Honesty <span>· what the docs didn't tell me</span></div>
+    <div class="kicker">19 — Honesty <span>· what the docs didn't tell me</span></div>
     <h1>What I got wrong, and how I found out</h1>
     <div class="grid">
       <div class="card"><div class="n">01 · OPENSHELL ON MACOS</div><h3>Sandbox creation just failed</h3>
@@ -47,10 +47,10 @@
         <div class="r"><span class="k">Saw</span><span>No policy decisions were being made, and there was no error.</span></div>
         <div class="r"><span class="k">Cause</span><span>v0.4.0 wants <code>policies.kyverno.io/v1alpha1</code>. The current docs show <code>v1</code>.</span></div>
         <div class="r fix"><span class="k">Fix</span><span>Pinned the apiVersion and confirmed the DENY in OpenShell's log.</span></div></div>
-      <div class="card"><div class="n">05 · KYVERNO AUTHZ</div><h3>The policy couldn't see the path</h3>
-        <div class="r"><span class="k">Saw</span><span>Path rules didn't match the agent's request.</span></div>
-        <div class="r"><span class="k">Cause</span><span>The server evaluates the outer request unless <code>--nested-request</code> is set.</span></div>
-        <div class="r fix"><span class="k">Fix</span><span>The guard sends the agent's request as raw HTTP/1.1 in the body.</span></div></div>
+      <div class="card"><div class="n">05 · KYVERNO AUTHZ</div><h3>An allow overrode a deny</h3>
+        <div class="r"><span class="k">Saw</span><span>With two policies loaded, every MCP call passed, but each policy alone was correct.</span></div>
+        <div class="r"><span class="k">Cause</span><span>The GitHub rule's explicit <code>Allowed()</code> decided requests it was never meant for.</span></div>
+        <div class="r fix"><span class="k">Fix</span><span><code>matchConditions</code> per policy, then re-proved every case live.</span></div></div>
       <div class="card"><div class="n">06 · LIFECYCLE</div><h3>The guard died while registered</h3>
         <div class="r"><span class="k">Saw</span><span>The process exited with the shell that started it.</span></div>
         <div class="r"><span class="k">Cause</span><span>The gateway refuses to start if a registered middleware is down.</span></div>
@@ -63,7 +63,7 @@
   </div>
   <div class="footer">
     <span>OPENSHELL AGENT GUARDRAILS · AMARTYA PANDEY</span>
-    <span>PAGE 14 / 15</span>
+    <span>PAGE 19 / 20</span>
   </div>
 </div>
 </body>
