@@ -2,11 +2,21 @@
 # Sign a reviewed policy. Refuses to sign anything the prover cannot place
 # inside the operator boundary, so a signature always implies containment.
 # To take over review, put your own public key in policies/allowed_signers and
-# point POLICY_REVIEW_KEY at the matching private key.
+# point POLICY_REVIEW_KEY at the matching private key. --boundary signs the
+# operator boundary instead (namespace openshell-boundary). In a real setup the
+# operator and the reviewer hold different keys; this demo uses one.
 set -euo pipefail
 
 ROOT="$(unset CDPATH; cd -- "$(dirname -- "$0")/.." && pwd)"
 KEY="${POLICY_REVIEW_KEY:-${HOME}/.ssh/openshell_policy_review}"
+if [ "${1:-}" = "--boundary" ]; then
+  # Operator action: sign the ceiling itself. No proof applies to the boundary.
+  boundary="${ROOT}/policies/boundary/org-boundary.yaml"
+  rm -f "${boundary}.sig"
+  ssh-keygen -q -Y sign -f "$KEY" -n openshell-boundary "$boundary"
+  echo "signed ${boundary#"${ROOT}/"} -> ${boundary#"${ROOT}/"}.sig"
+  exit 0
+fi
 if [ "$#" -eq 0 ]; then
   set -- "${ROOT}/policies/openshell/agent-policy.yaml" "${ROOT}/policies/openshell/agent-policy-kyverno.yaml"
 fi

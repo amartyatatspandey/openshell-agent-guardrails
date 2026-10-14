@@ -14,7 +14,7 @@ help:
 	  'kyverno-stop  Remove that registration and stop the bonus processes' \
 	  'policy-gate   Prove agent-policy.yaml is inside the operator boundary and check its review signature' \
 	  'policy-sign   Re-sign reviewed policies (refuses anything outside the boundary)' \
-	  'policy-tamper Edit copies of the policy seven ways and show the gate refuses every one' \
+	  'policy-tamper Edit copies of the policy (and the boundary) eight ways; the gate refuses every one' \
 	  'clean      Delete the guardrails-demo sandbox'
 
 preflight:

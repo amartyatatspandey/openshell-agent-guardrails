@@ -1,1 +1,1 @@
-openshell-policy-review namespaces="openshell-policy,openshell-evidence" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKW+21RT2746aU5ThVqesjL5J7CkLBztnFNJ+e50fJdk
+openshell-policy-review namespaces="openshell-policy,openshell-boundary,openshell-evidence" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKW+21RT2746aU5ThVqesjL5J7CkLBztnFNJ+e50fJdk

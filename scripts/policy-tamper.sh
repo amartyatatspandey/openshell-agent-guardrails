@@ -69,6 +69,22 @@ for entry in "${cases[@]}"; do
     refused=$((refused + 1))
   fi
 done
+# Last case: widen the boundary and the policy together, so the proof passes.
+# Only the operator's signature on the boundary stops it.
+total=$((total + 1))
+perl -pe 's/host: httpbin.org/host: example.com/' "${ROOT}/policies/boundary/org-boundary.yaml" >"${DIR}/boundary-widened.yaml"
+cp "${ROOT}/policies/boundary/org-boundary.yaml.sig" "${DIR}/boundary-widened.yaml.sig"
+perl -pe 's/host: httpbin.org/host: example.com/' "$POLICY" >"${DIR}/both-widened.yaml"
+cp "${POLICY}.sig" "${DIR}/both-widened.yaml.sig"
+set +e
+out="$(BOUNDARY="${DIR}/boundary-widened.yaml" bash "${ROOT}/scripts/policy-gate.sh" "${DIR}/both-widened.yaml" 2>&1)"
+rc=$?
+set -e
+printf '%-14s  %-17s  %-9s  %s\n' "both-widened" "not run" "-" "$(printf '%s\n' "$out" | sed -nE 's/^POLICY-GATE boundary untrusted (.*)/boundary untrusted: \1/p')"
+if [ "$rc" -ne 0 ]; then
+  refused=$((refused + 1))
+fi
+
 echo
 echo "${refused}/${total} edited policies refused"
 [ "$refused" -eq "$total" ]

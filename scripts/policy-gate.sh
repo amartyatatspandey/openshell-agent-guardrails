@@ -25,6 +25,15 @@ if [ ! -x "$PROVER" ]; then
 fi
 mkdir -p "$OUT"
 
+# The boundary is the trust anchor: if it could be widened unnoticed, the proof
+# below would mean nothing. Check the operator's signature on it first.
+if ! ssh-keygen -Y verify -f "$SIGNERS" -I "$SIGNER_ID" -n openshell-boundary -s "${BOUNDARY}.sig" <"$BOUNDARY" >/dev/null 2>&1; then
+  echo "POLICY-GATE boundary untrusted (${BOUNDARY#"${ROOT}/"} is not the signed operator boundary)"
+  echo "POLICY-GATE refuse ${POLICY#"${ROOT}/"}"
+  exit 1
+fi
+echo "POLICY-GATE boundary-signature valid ${BOUNDARY#"${ROOT}/"}"
+
 # The prover reports network middleware as an unsupported shape. Middleware
 # runs only on traffic the network policy already admitted, so it can add
 # denials but never allow more. Prove the policy without that block.
