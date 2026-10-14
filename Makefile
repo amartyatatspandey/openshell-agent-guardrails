@@ -1,4 +1,4 @@
-.PHONY: help setup preflight verify demo clean kyverno kyverno-stop policy-gate policy-sign policy-tamper evidence evidence-verify
+.PHONY: help setup preflight verify demo clean kyverno kyverno-stop policy-gate policy-sign policy-tamper evidence evidence-verify approval-demo approval-gate
 
 IMAGE ?= openshell-guardrails-agent:dev
 PROVIDER ?= demo-github
@@ -17,6 +17,8 @@ help:
 	  'policy-tamper Edit copies of the policy (and the boundary) eight ways; the gate refuses every one' \
 	  'evidence     verify, then write a signed, hash-chained evidence bundle to .out/evidence/' \
 	  'evidence-verify  Check the newest bundle: signature, hash chain, file drift' \
+	  'approval-demo  Agent hits two unlisted hosts; OpenShell proposes rules; proposals outside the boundary are rejected by proof' \
+	  'approval-gate  Prove every pending proposal for a sandbox (SANDBOX=name) and reject what exceeds the boundary' \
 	  'clean      Delete the guardrails-demo sandbox'
 
 preflight:
@@ -55,3 +57,9 @@ evidence: preflight
 
 evidence-verify:
 	bash scripts/evidence-verify.sh "$$(ls -t .out/evidence/evidence-*.json | head -1)"
+
+approval-demo: preflight
+	bash scripts/approval-demo.sh
+
+approval-gate:
+	bash scripts/approval-gate.sh $(or $(SANDBOX),guardrails-approval)
