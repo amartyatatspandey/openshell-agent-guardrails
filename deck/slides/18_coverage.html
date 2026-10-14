@@ -6,7 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="base.css">
 <style>
-  h1 { margin-bottom: 6px; }
+  h1 { margin-bottom: 10px; }
   .src { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; margin-bottom: 14px; }
   table { width: 100%; border-collapse: collapse; border: 2px solid #1A1A1A; }
   th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; padding: 8px 12px; background: #1A1A1A; color: #fff; }
@@ -19,13 +19,19 @@
   .trifecta div:last-child { border-right: 0; }
   .trifecta .t { background: #D9381E; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; }
   .trifecta b { display: block; font-size: 13.5px; }
+  .reads { display: grid; grid-template-columns: 150px 1fr 1fr 1fr; border: 2px solid #1A1A1A; margin: 4px 0 12px 0; }
+  .reads > div { padding: 8px 12px; font-size: 12.2px; line-height: 1.4; color: #333; border-right: 1px solid #E0E0E0; }
+  .reads > div:last-child { border-right: 0; }
+  .reads .rl { background: #1A1A1A; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; }
+  .reads b { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10.8px; color: #1A1A1A; margin-bottom: 2px; }
+  .reads span { display: block; color: #3f7a52; font-weight: 700; margin-top: 3px; }
   /* sizing pass */
-  td { padding: 13px 14px; font-size: 14.2px; }
-  th { padding: 10px 14px; }
+  td { padding: 8px 14px; font-size: 13.4px; }
+  th { padding: 7px 14px; }
   .src { font-size: 13px; margin-bottom: 18px; }
-  .trifecta { margin-top: 20px; }
-  .trifecta div { font-size: 13.8px; padding: 12px 14px; }
-  .trifecta b { font-size: 14.6px; }
+  .trifecta { margin-top: 12px; }
+  .trifecta div { font-size: 12.8px; padding: 8px 12px; }
+  .trifecta b { font-size: 13.4px; }
 </style>
 </head>
 <body>
@@ -33,8 +39,13 @@
   <div class="accent-rule"></div>
   <div class="inner">
     <div class="kicker">18 — Against current research</div>
-    <h1>Where this sits among the MCP control categories</h1>
-    <div class="src">Errico, Ngiam, Sojan, "Securing the Model Context Protocol (MCP): Risks, Controls, and Governance", arXiv:2511.20920, Nov 2025</div>
+    <h1>What I read, and where this sits against it</h1>
+    <div class="reads">
+      <div class="rl">Read before building</div>
+      <div><b>NSA AISC · CSI, May 2026</b>MCP: Security Design Considerations for AI-Driven Automation<span>→ secure defaults, fail closed</span></div>
+      <div><b>Errico, Ngiam, Sojan · arXiv:2511.20920</b>Securing the MCP: Risks, Controls, and Governance<span>→ the five categories below</span></div>
+      <div><b>Acharya, Gupta · arXiv:2604.05969</b>MCPShield: a formal security framework for MCP agents<span>→ formal proof + defense in depth</span></div>
+    </div>
     <table>
       <tr><th>Category</th><th>Enforced and graded here</th><th>Not here, stated in the README</th></tr>
       <tr><td>AuthN / AuthZ</td><td>Credential bound to host, port and path; the agent holds a placeholder. Per-tool allowlist on MCP calls.</td><td class="no">Per-user OAuth 2.1, per-user RBAC</td></tr>

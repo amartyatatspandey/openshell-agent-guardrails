@@ -104,7 +104,9 @@ Cost (spend, quotas) is an AIControls domain and is not measured here. Complianc
 
 ## Coverage against the MCP control categories in arXiv:2511.20920
 
-Errico, Ngiam and Sojan (*Securing the Model Context Protocol (MCP): Risks, Controls, and Governance*, Nov 2025) group MCP controls into five categories behind one gateway, and name fail-open versus fail-closed as a key decision. This repo's position against each:
+Errico, Ngiam and Sojan (*Securing the Model Context Protocol (MCP): Risks, Controls, and Governance*, Nov 2025) group MCP controls into five categories behind one gateway, and name fail-open versus fail-closed as a key decision. Two other sources shaped the design. The NSA AI Security Center's Cybersecurity Information Sheet *Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation* (May 2026) argues for secure defaults and validation in the implementation; hence deny-by-default and fail-closed throughout. Acharya and Gupta's *A Formal Security Framework for MCP-Based AI Agents* (MCPShield, arXiv:2604.05969, Apr 2026) argues for formal verification and defense in depth; hence the containment proof before the sandbox and the layering of kernel, OpenShell, Kyverno and signed evidence.
+
+This repo's position against each of the five categories:
 
 | Category | Here | Not here |
 | --- | --- | --- |
