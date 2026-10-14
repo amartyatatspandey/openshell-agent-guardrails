@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Check an evidence bundle: its signature, its hash chain, and whether the
 # repo files it names still have the hashes it recorded.
-# Exit 0 when the signature and chain hold (file drift is reported, not fatal).
+# Exit 0 when the chain holds and any signature present is valid (file drift
+# is reported, not fatal).
 set -euo pipefail
 
 ROOT="$(unset CDPATH; cd -- "$(dirname -- "$0")/.." && pwd)"
@@ -16,8 +17,9 @@ elif [ -f "${bundle}.sig" ]; then
   echo "signature: INVALID (the bundle changed after it was signed)"
   ok=0
 else
-  echo "signature: none"
-  ok=0
+  # Bundles made without the review key (anyone but the reviewer) are unsigned.
+  # The chain still catches edits; it cannot prove who produced the bundle.
+  echo "signature: none (made without the review key; the chain is checked, authorship is not)"
 fi
 
 EV_ROOT="$ROOT" python3 - "$bundle" <<'PY' || ok=0
