@@ -18,8 +18,12 @@ Pinned CLI: OpenShell **v0.1.3**. On Docker Desktop for Mac, **Settings > Resour
 | `filesystem_policy` + `landlock.compatibility: hard_requirement` | `/opt/company/prod.env` is mode `0644` in the image, so Unix permissions would allow the read. Landlock is what denies it. OpenShell's filesystem events are emitted by the sandbox runtime and are **not** pushed to the gateway log stream (`openshell logs --source sandbox`). | `kind=exit-code`. `scenarios/run_all.sh` prints `PROBE fs-secret-denied BLOCKED` only when the read fails with a permission error. `verify.sh` accepts that line. If a future build records the denial in the log, put that extended regex in the pattern column. |
 | `process.run_as_user` / `run_as_group` `1000` | The workload is not root. A failed attempt to gain privilege is enforced by the kernel and is not one of the gateway denial lines this demo matches. | `kind=exit-code`. The probe script must print `PROBE priv-nonroot-denied BLOCKED`. |
 
-`openshell rule get <name> --status pending` lists agent-proposed rule changes waiting for a person. This policy file does not auto-approve anything. The demo never approves a pending rule.
+`openshell rule get <name> --status pending` lists rule changes OpenShell proposes after a denial. `scripts/approval-gate.sh` proves each one against the boundary and rejects what falls outside it. Nothing is approved automatically.
 
 `scenarios/run_all.sh` makes one attempt per row above inside the sandbox, so a live run generates these lines. `make verify` grades them.
 
-`agent-policy-kyverno.yaml` is the same sandbox policy plus `network_middlewares.kyverno_guard` on `api.github.com`. `make kyverno` registers the middleware and uses that file. `make verify` does not.
+`agent-policy-kyverno.yaml` is the same sandbox policy plus a `mcp_demo` rule (only `POST /mcp` on `host.openshell.internal:8766`, curl only) and `network_middlewares.kyverno_guard` on `api.github.com` and that host. `make kyverno` registers the middleware and uses that file. `make verify` does not.
+
+## Boundary and signatures
+
+`../boundary/org-boundary.yaml` is the operator's ceiling. Both policies here must be proven inside it by `openshell-prover`, and each must match its `.sig` (reviewer key in `../allowed_signers`, namespace `openshell-policy`). Both set `include_workdir: false`, because the prover cannot reason about an unresolved image workdir. After a reviewed edit, run `make policy-sign`; it refuses to sign a policy outside the boundary.
